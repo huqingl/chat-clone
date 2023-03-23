@@ -1,7 +1,6 @@
 const AnswerSection = ({ storedValues }) => {
   return (
     <>
-      <hr className="hr-line" />
       <div className="answer-container">
         {storedValues.map((value, index) => {
           return (

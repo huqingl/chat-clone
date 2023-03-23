@@ -7,8 +7,8 @@
 }
 
 body {
-  font-family: 'Poppins', sans-serif;
-  background: #1D1E20;
+  font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,'Noto Sans',sans-serif,'Apple Color Emoji','Segoe UI Emoji','Segoe UI Symbol','Noto Color Emoji';
+  background-color: rgba(247,247,248,var(--tw-bg-opacity));
   color: #DADADB;
   max-width: 800px;
   margin: 0 auto;
