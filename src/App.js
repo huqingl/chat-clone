@@ -20,12 +20,16 @@ const App = () => {
       frequency_penalty: 0,
       presence_penalty: 0,
     };
+    //将文本question变为对象
     const comleteQuestion = { role: "user", content: newQuestion };
-    // let comleteMessages = [...initMessage,comleteQuestion]
-    setStoreMessages([...storeMessages, comleteQuestion]);
-    const comleteOptions = { ...options, messages: storeMessages };
+    //将新提问加入到messages数组里
+    const newMessages = [...storeMessages, comleteQuestion]
+    setStoreMessages(newMessages);
+    //提交到API的参数，加入了messages key
+    const comleteOptions = { ...options, messages: newMessages };
 
-    const response = await openai.ChatCompletion.create(comleteOptions);
+    const response = await openai.createChatCompletion(comleteOptions)
+
     if (response.data.choices) {
       setStoredValues([
         ...storedValues,
