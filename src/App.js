@@ -2,7 +2,8 @@ import { Configuration, OpenAIApi } from "openai";
 import FormSection from "./components/FormSection";
 import AnswerSection from "./components/AnswerSection";
 import { useState } from "react";
-import "./App.css";
+import "./App.scss";
+
 
 const App = () => {
   const configration = new Configuration({
@@ -18,6 +19,10 @@ const App = () => {
     {
       question: "他最有代表性的作品是哪一部呢？",
       answer: "周星驰的电影作品非常丰富，但是他最有代表性的作品应该是《大话西游》系列。这部电影以中国古代神话故事《西游记》为蓝本，加入了大量的幽默元素和现代化的表现手法，成为了中国电影史上的经典之作。除此之外，他的其他代表作还包括《喜剧之王》、《少林足球》、《功夫》等。",
+    },
+    {
+      question: "测试代码",
+      answer: "<code>import { createFromIconfontCN } from '@ant-design/icons'</code>"
     },
   ]);
   const [storeMessages, setStoreMessages] = useState([
@@ -56,8 +61,10 @@ const App = () => {
   };
   return (
     <div className="App">
-      <AnswerSection storedValues={storedValues} />
-      <FormSection generateResponse={generateResponse} />
+      <div className="container">
+        <AnswerSection storedValues={storedValues} />
+        <FormSection generateResponse={generateResponse} />
+      </div>
     </div>
   );
 };
