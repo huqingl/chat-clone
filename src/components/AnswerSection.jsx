@@ -15,31 +15,23 @@ const AnswerSection = ({ storedValues }) => {
         <div className="answer-wrapper">
           <div className="answer-content">
             {storedValues.map((value, index) => {
+              const person = value.role === 'user' ? 'icon-human' : 'icon-openai-icon';
               return (
                 <div className="answer-section" key={index}>
-                  <div className="question">
-                    <div className="logo">
-                      <IconFont
-                        type="icon-human"
-                        style={{ fontSize: "20px", color: "red" }}
-                      />
-                    </div>
-                    <div>{value.question}</div>
-                  </div>
                   <div className="answer">
                     <div className="logo">
                       <IconFont
-                        type="icon-openai-icon"
+                        type={person}
                         style={{ fontSize: "20px", color: "green" }}
                       />
                     </div>
-                    <div className="answer-content"><HighlightedResponse response={value.answer} /></div>
+                    <div className="answer-content"><HighlightedResponse response={value.content} /></div>
                   </div>
                 </div>
               );
             })}
             <div style={{ padding: "20px 0" }}>
-              
+
             </div>
             <div className="fill-bottom"></div>
           </div>
