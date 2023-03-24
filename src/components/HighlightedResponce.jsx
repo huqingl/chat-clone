@@ -1,24 +1,41 @@
 import React from 'react';
-import ReactMarkdown from 'react-markdown';
-import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
-import js from 'react-syntax-highlighter/dist/cjs/languages/hljs/javascript';
+// import ReactMarkdown from 'react-markdown';
+// import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
+// import js from 'react-syntax-highlighter/dist/cjs/languages/hljs/javascript';
 // import { atomOneDark } from 'react-syntax-highlighter/dist/cjs/styles/hljs';
 
-SyntaxHighlighter.registerLanguage('javascript', js);
+// SyntaxHighlighter.registerLanguage('javascript', js);
 
+// function HighlightedResponse({ response }) {
+//   const codeBlockRegex = /```([\w-]+)?\n([^`]+)```/g;
+//   const processedResponse = response.replace(
+//     codeBlockRegex,
+//     (_, lang, code) =>
+//       `<SyntaxHighlighter language="${lang || 'text'}" style={atomOneDark}>${code.trim()}</SyntaxHighlighter>`
+//   );
+
+//   return (
+//     <div>
+//       <ReactMarkdown>{processedResponse}</ReactMarkdown>
+//     </div>
+//   );
+// }
+
+import Prism from 'prismjs';
+import 'prismjs/components/prism-javascript';
+import 'prismjs/themes/prism.css';
+const codeBlockRegex = /```([\w-]+)?\n([^`]+)```/g;
 function HighlightedResponse({ response }) {
-  const codeBlockRegex = /```([\w-]+)?\n([^`]+)```/g;
   const processedResponse = response.replace(
     codeBlockRegex,
     (_, lang, code) =>
-      `<SyntaxHighlighter language="${lang || 'text'}" style={atomOneDark}>${code.trim()}</SyntaxHighlighter>`
+      `<pre><code class="language-${lang || 'text'}">${Prism.highlight(
+        code.trim(),
+        Prism.languages[lang] || Prism.languages.markup
+      )}</code></pre>`
   );
 
-  return (
-    <div>
-      <ReactMarkdown>{processedResponse}</ReactMarkdown>
-    </div>
-  );
+  return <div dangerouslySetInnerHTML={{ __html: processedResponse }} />;
 }
 
 export default HighlightedResponse;
