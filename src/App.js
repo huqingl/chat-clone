@@ -9,7 +9,8 @@ const App = () => {
     apiKey: process.env.REACT_APP_OPENAI_API_KEY,
   });
   const openai = new OpenAIApi(configration);
-  const [storedValues, setStoredValues] = useState([]);
+  const [storedValues, setStoredValues] = useState([
+  ]);
   const [storeMessages, setStoreMessages] = useState([
     { role: "system", content: "I'm a helpful assistant." },
   ]);
@@ -30,7 +31,7 @@ const App = () => {
     //提交到API的参数，加入了messages key
     const comleteOptions = { ...options, messages: newMessages };
 
-    const response = await openai.createChatCompletion(comleteOptions)
+    const response = await openai.createChatCompletion(comleteOptions);
 
     if (response.data.choices) {
       setStoredValues([
