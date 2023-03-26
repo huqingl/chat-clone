@@ -16,13 +16,14 @@ const AnswerSection = ({ storedValues }) => {
           <div className="answer-content">
             {storedValues.map((value, index) => {
               const person = value.role === 'user' ? 'icon-human' : 'icon-openai-icon';
+              const logoColor = value.role === 'user' ? { fontSize: "20px", color: 'red' } : { fontSize: "20px", color: 'green' };
               return (
                 <div className="answer-section" key={index}>
                   <div className="answer">
                     <div className="logo">
                       <IconFont
                         type={person}
-                        style={{ fontSize: "20px", color: "green" }}
+                        style={logoColor}
                       />
                     </div>
                     <div className="answer-content"><HighlightedResponse response={value.content} /></div>

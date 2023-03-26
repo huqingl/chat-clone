@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Input ,Button} from "antd";
+import { Input, Button } from "antd";
 // import { SendOutlined } from '@ant-design/icons'
 import { createFromIconfontCN } from "@ant-design/icons";
 
@@ -9,7 +9,7 @@ const IconFont = createFromIconfontCN({
 const { TextArea } = Input;
 const FormSection = ({ generateResponse }) => {
   const [newQuestion, setNewQuestion] = useState("");
-  const [canClick,setCanClick] = useState('disabled');
+  // const [canClick,setCanClick] = useState('disabled');
   return (
     <div className="footer">
       <div className="form-section">
@@ -23,9 +23,8 @@ const FormSection = ({ generateResponse }) => {
 
         <div
           className="btn"
-          onClick={() => generateResponse(newQuestion, setNewQuestion)}
         >
-          <Button type="text" className="sendButton" >
+          <Button type="text" className="sendButton" disabled={newQuestion.length === 0} onClick={() => generateResponse(newQuestion, setNewQuestion)}>
             <IconFont type="icon-send" style={{ fontSize: "34px" }} />
           </Button>
         </div>

@@ -23,6 +23,9 @@ import React from 'react';
 
 import Prism from 'prismjs';
 import 'prismjs/components/prism-javascript';
+import 'prismjs/components/prism-php';
+import 'prismjs/components/prism-python';
+
 import 'prismjs/themes/prism.css';
 const codeBlockRegex = /```([\w-]+)?\n([^`]+)```/g;
 function HighlightedResponse({ response }) {
