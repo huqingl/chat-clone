@@ -1,65 +1,68 @@
-// import { Configuration, OpenAIApi } from "openai";
-// import { Configuration, OpenAIApi } from "openai-edge"
-import useServerSentEvents from "./hooks/useServerSentEvents"
 import FormSection from "./components/FormSection";
 import AnswerSection from "./components/AnswerSection";
 import { useState } from "react";
 import "./App.scss";
+function getCookie(cname) {
+  let name = cname + "=";
+  let decodedCookie = decodeURIComponent(document.cookie);
+  let ca = decodedCookie.split(';');
+  for (let i = 0; i < ca.length; i++) {
+    let c = ca[i];
+    while (c.charAt(0) == ' ') {
+      c = c.substring(1);
+    }
+    if (c.indexOf(name) == 0) {
+      return c.substring(name.length, c.length);
+    }
+  }
+  return "";
+}
+
+function uuidv4() {
+  return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
+    (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+  );
+}
+if (getCookie("id") == "") {
+  uuid = uuidv4()
+  document.cookie = "id=" + uuid
+} else {
+  uuid = getCookie("id")
+}
+const USER_ID = uuid
 
 const App = () => {
-  const configration = new Configuration({
-    apiKey: process.env.REACT_APP_OPENAI_API_KEY,
-  });
-  const openai = new OpenAIApi(configration);
   const [storedValues, setStoredValues] = useState([]);
-  const [storeMessages, setStoreMessages] = useState([
-    { role: "system", content: "I'm a helpful assistant." },
-  ]);
   const GenerateResponse = async (newQuestion, setNewQuestion) => {
-    const options = {
-      model: "gpt-3.5-turbo",
-      temperature: 0.1,
-      stream: true,
-      max_tokens: 2000,
-      top_p: 1,
-      frequency_penalty: 0,
-      presence_penalty: 0,
-    };
     //将文本question变为对象
     const comleteQuestion = { role: "user", content: newQuestion };
     const newStoredValues = [...storedValues, comleteQuestion]
     setStoredValues(newStoredValues)
-
-    //将新提问加入到messages数组里
-    const newMessages = [...storeMessages, comleteQuestion];
-    setStoreMessages(newMessages);
-    //提交到API的参数，加入了messages key
-    const comleteOptions = { ...options, messages: newMessages };
-
-    const response = await openai.createChatCompletion(comleteOptions, { responseType: 'stream' })
-    // response.data.on("data", (data) => {
-    //   const lines = data
-    //     ?.toString()
-    //     ?.split("\n")
-    //     .filter((line) => line.trim() !== "");
-    //   for (const line of lines) {
-    //     const message = line.replace(/^data: /, "");
-    //     if (message === "[DONE]") {
-    //       break; // Stream finished
-    //     }
-    //     try {
-    //       const parsed = JSON.parse(message);
-    //       console.log(parsed.choices[0]);
-    //     } catch (error) {
-    //       console.error("Could not JSON parse stream message", message, error);
-    //     }
-    //   }
-    // })
-    if (response.data.choices) {
-      setStoredValues([...newStoredValues, response.data.choices[0].message])
-      setStoreMessages([response.data.choices[0].message]);
-      setNewQuestion("");
-    }
+    const formData = new FormData();
+    formData.append('msg', newQuestion)
+    formData.append('user_id', USER_ID)
+    fetch('https://mysite.com/send-messages.php', { method: 'POST', body: formData }).then(response => response.json()).then(data => {
+      const eventSource = new EventSource(`https://mysite.com/event-stream.php?chat_history_id=${data.id}&id={encodeURIComponent(USER_ID)}`);
+      eventSource.onmessage = function (e) {
+        if (e.data === "[DONE]") {
+          eventSource.close();
+          setNewQuestion('');
+        } else {
+          let txt = JSON.parse(e.data).choices[0].delta.content
+          if (txt !== undefined) {
+            let answer = ''
+            answer += txt.replace(/(?:\r\n|\r|\n)/g, '<br>')
+            setStoredValues([...newStoredValues, { 'role': 'assistant', 'content': answer }])
+            setNewQuestion("");
+          }
+        }
+      }
+      eventSource.onerror = function (e) {
+        console.log(e)
+        eventSource.close()
+      }
+    })
+      .catch(error => console.log(error));
   };
   return (
     <div className="App">
