@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { Input, Button } from "antd";
+import { Space, Input, Button } from "antd";
 // import { SendOutlined } from '@ant-design/icons'
 import { createFromIconfontCN } from "@ant-design/icons";
 
 const IconFont = createFromIconfontCN({
-  scriptUrl: "//at.alicdn.com/t/c/font_3973055_q1v51b0wk8o.js",
+  scriptUrl: "//at.alicdn.com/t/c/font_3973055_x1qwjo6x41.js",
 });
 const { TextArea } = Input;
 const FormSection = ({ generateResponse }) => {
@@ -13,24 +13,28 @@ const FormSection = ({ generateResponse }) => {
   return (
     <div className="footer">
       <div className="form-section">
-        <TextArea
-          autoSize={{ minRows: 2 }}
-          className="form-control"
-          placeholder="请输入你的问题"
-          value={newQuestion}
-          onChange={(e) => setNewQuestion(e.target.value)}
-        />
+        <Space.Compact style={{width:'100%'}}> 
+          <TextArea
+            autoSize={{ minRows: 2 }}
+            className="form-control"
+            placeholder="请输入你的问题"
+            value={newQuestion}
+            onChange={(e) => setNewQuestion(e.target.value)}
+          />
 
-        <div
-          className="btn"
-        >
-          <Button type="text" className="sendButton" disabled={newQuestion.length === 0} onClick={() => generateResponse(newQuestion, setNewQuestion)}>
-            <IconFont type="icon-send" style={{ fontSize: "34px" }} />
-          </Button>
-        </div>
+          <div className="btn">
+            <Button
+              type="text"
+              className="sendButton"
+              disabled={newQuestion.length === 0}
+              onClick={() => generateResponse(newQuestion, setNewQuestion)}
+            >
+              <IconFont type="icon-send1" style={{ fontSize: "34px" }} />
+            </Button>
+          </div>
+        </Space.Compact>
       </div>
-      <div className="description">
-      </div>
+      <div className="description"></div>
     </div>
   );
 };
