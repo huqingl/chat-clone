@@ -37,40 +37,7 @@ const App = () => {
     uuid = getCookie("id");
   }
   const USER_ID = uuid;
-  const [storedValues, setStoredValues] = useState( [
-    {
-      "role": "user",
-      "content": "酱油在中餐里的重要性？"
-    },
-    {
-      "role": "assistant",
-      "content": "酱油是中餐里非常重要的调味料之一，几乎每道菜都会用到。它可以增加菜肴的味道和香气，使菜肴更加美味。酱油的味道鲜美，有咸味和甜味，可以平衡其他调味料的味道，使菜肴更加均衡。此外，酱油还可以增加菜肴的色泽，使其更加诱人。在中餐中，酱油通常与其他调味料一起使用，如盐、糖、醋、姜、蒜等，以达到最佳的味道效果。"
-    },
-    {
-      "role": "user",
-      "content": "它是怎么制作的?"
-    },
-    {
-      "role": "assistant",
-      "content": "酱油是中餐里非常重要的调味料之一，几乎每道菜都会用到。它可以增加菜肴的味道和香气，使菜肴更加美味。酱油的味道鲜美，有咸味和甜味，可以平衡其他调味料的味道，使菜肴更加均衡。此外，酱油还可以增加菜肴的色泽，使其更加诱人。在中餐中，酱油通常与其他调味料一起使用，如盐、糖、醋、姜、蒜等，以达到最佳的味道效果。"
-    },
-    {
-      "role": "user",
-      "content": "它是怎么制作的?"
-    },
-    {
-      "role": "assistant",
-      "content": "酱油是中餐里非常重要的调味料之一，几乎每道菜都会用到。它可以增加菜肴的味道和香气，使菜肴更加美味。酱油的味道鲜美，有咸味和甜味，可以平衡其他调味料的味道，使菜肴更加均衡。此外，酱油还可以增加菜肴的色泽，使其更加诱人。在中餐中，酱油通常与其他调味料一起使用，如盐、糖、醋、姜、蒜等，以达到最佳的味道效果。"
-    },
-    {
-      "role": "user",
-      "content": "它是怎么制作的?"
-    },
-    {
-      "role": "assistant",
-      "content": "酱油是中餐里非常重要的调味料之一，几乎每道菜都会用到。它可以增加菜肴的味道和香气，使菜肴更加美味。酱油的味道鲜美，有咸味和甜味，可以平衡其他调味料的味道，使菜肴更加均衡。此外，酱油还可以增加菜肴的色泽，使其更加诱人。在中餐中，酱油通常与其他调味料一起使用，如盐、糖、醋、姜、蒜等，以达到最佳的味道效果。"
-    },
-]);
+  const [storedValues, setStoredValues] = useState([]);
   const GenerateResponse = async (newQuestion, setNewQuestion) => {
     //将文本question变为对象
     const comleteQuestion = { role: "user", content: newQuestion };
@@ -86,7 +53,9 @@ const App = () => {
       .then((response) => response.json())
       .then((data) => {
         const eventSource = new EventSource(
-          `http://chatclone.site:3000/event-stream.php?chat_history_id=${data.id}&id=${encodeURIComponent(USER_ID)}`
+          `http://chatclone.site:3000/event-stream.php?chat_history_id=${
+            data.id
+          }&id=${encodeURIComponent(USER_ID)}`
         );
         let answer = "";
         eventSource.onmessage = function (e) {
@@ -96,12 +65,13 @@ const App = () => {
           } else {
             let txt = JSON.parse(e.data).choices[0].delta.content;
             if (txt !== undefined) {
-              answer += txt.replace(/(?:\r\n|\r|\n)/g, "<br>");
+              // console.log('=>',txt)
+              answer += txt.replace(/(?:\n|\r\n|\r|\n\n)/g, "<br>");
+              // answer += txt;
               setStoredValues([
                 ...newStoredValues,
                 { role: "assistant", content: answer },
               ]);
-              setNewQuestion("");
             }
           }
         };
