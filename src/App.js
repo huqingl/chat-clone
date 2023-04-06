@@ -37,7 +37,8 @@ const App = () => {
     uuid = getCookie("id");
   }
   const USER_ID = uuid;
-  const [storedValues, setStoredValues] = useState([]);
+  const [storedValues, setStoredValues] = useState([
+  ]);
   const GenerateResponse = async (newQuestion, setNewQuestion) => {
     //将文本question变为对象
     const comleteQuestion = { role: "user", content: newQuestion };
