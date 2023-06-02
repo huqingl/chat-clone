@@ -1,19 +1,35 @@
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
-import { Button, Space, Form, Input } from "antd";
+import { Button, Space, Form, Input, message } from "antd";
 import { useState, useRef, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Vertify } from "@alex_xu/react-slider-vertify";
 
 import axios from "axios";
+import qs from "qs";
 export default function Login() {
+  const navigate = useNavigate();
   const [isMobile, setIsMobile] = useState(false);
   const onChange = (values) => {
-    console.log(values);
-    const result = /^1[3|4|5|7|8][0-9]\d{8}$/.test(values.mobile)
+    const result = /^1[3|4|5|7|8][0-9]\d{8}$/.test(values.phone);
     setIsMobile(result);
   };
   const onFinish = (values) => {
-    console.log("Received values of form: ", values);
+    axios
+      .post("http://192.168.80.13:5000/register", qs.stringify(values))
+      .then((res) => {
+        console.log(res);
+        if (res.data.code === 1) {
+          message.success({
+            duration: 3,
+            content: res.data.msg + ",即将跳转到登录界面",
+            onClose: () => {
+              navigate("/login");
+            },
+          });
+        } else {
+          message.info({ duration: 3, content: res.data.msg });
+        }
+      });
   };
   const showCaptcha = () => {
     setMaskVisible(true);
@@ -23,7 +39,7 @@ export default function Login() {
     setVisible(false);
     setMaskVisible(false);
     setCanClick(true);
-    setTime(10);
+    setTime(60);
   };
   const [canClick, setCanClick] = useState(false);
   const [time, setTime] = useState(0);
@@ -35,7 +51,7 @@ export default function Login() {
   }, []);
 
   useEffect(() => {
-    if (time === 10)
+    if (time === 60)
       timer.current = setInterval(() => setTime((time) => --time), 1000);
     else if (time <= 0) {
       setCanClick(false);
@@ -55,7 +71,7 @@ export default function Login() {
           onValuesChange={onChange}
         >
           <Form.Item
-            name="mobile"
+            name="phone"
             rules={[
               {
                 required: true,
@@ -67,7 +83,7 @@ export default function Login() {
             <Input addonBefore="+86" placeholder="请输入您的手机号" />
           </Form.Item>
           <Form.Item
-            name="verifyCode"
+            name="captcha"
             rules={[
               {
                 required: true,
@@ -94,7 +110,7 @@ export default function Login() {
             </Space.Compact>
           </Form.Item>
           <Form.Item
-            name="username"
+            name="nickname"
             rules={[
               {
                 required: true,
