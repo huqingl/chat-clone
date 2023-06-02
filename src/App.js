@@ -37,13 +37,13 @@ const App = () => {
 
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
-  useEffect(() => {
-    if (token) {
-      return;
-    } else {
-      navigate("/login");
-    }
-  }, [navigate, token]);
+  // useEffect(() => {
+  //   if (token) {
+  //     return;
+  //   } else {
+  //     navigate("/login");
+  //   }
+  // }, [navigate, token]);
   useEffect(() => {
     const history = localStorage.getItem("history")
       ? localStorage.getItem("history")
@@ -148,8 +148,8 @@ const App = () => {
     //   });
   };
   return (
-    <div className="App">
-      <div className="container max-w-full">
+    <div className="App w-full h-full">
+      <div className="h-full relative max-w-full">
         <AnswerSection storedValues={storedValues} />
         <FormSection generateResponse={GenerateResponse} canInput={canInput} />
       </div>
