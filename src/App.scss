@@ -1,3 +1,28 @@
+:where(.css-dev-only-do-not-override-mxhywb).ant-btn-primary {
+  background-color: #1677ff!important;
+}
+.cursor {
+  animation: 0.6s van-cursor-flicker infinite;
+  display:inline-block;
+  width:6px;
+  color:black;
+  height:20px;
+  vertical-align:middle;
+  background-color: black;
+}
+@keyframes van-cursor-flicker {
+  from {
+    opacity: 0;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
 /* @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
@@ -32,7 +57,7 @@
 //             width: 760px;
 //             margin: 0 auto;
 //           }
-//           .answer-content {
+//           .answer-content-box {
 //             width: 760px;
 //             margin: 0 auto;
 

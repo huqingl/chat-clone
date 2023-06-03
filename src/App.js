@@ -35,7 +35,7 @@ import { message } from "antd";
 const App = () => {
   const [storedValues, setStoredValues] = useState([]);
 
-  const token = localStorage.getItem("token");
+  // const token = localStorage.getItem("token");
   const navigate = useNavigate();
   // useEffect(() => {
   //   if (token) {
@@ -47,8 +47,8 @@ const App = () => {
   useEffect(() => {
     const history = localStorage.getItem("history")
       ? localStorage.getItem("history")
-      : [];
-    setStoredValues(history);
+      : '[]';
+    setStoredValues(JSON.parse(history));
     // console.log(storedValues);
   }, []);
   // if (getCookie("id") === "") {
@@ -66,11 +66,12 @@ const App = () => {
     const comleteQuestion = { role: "user", content: newQuestion };
     const newStoredValues = [...storedValues, comleteQuestion];
     setStoredValues(newStoredValues);
-    console.log(storedValues);
-    localStorage.setItem("history", newStoredValues);
+    // console.log(storedValues);
+    localStorage.setItem("history", JSON.stringify(newStoredValues));
     const eventSource = new EventSource(
       // 'http://192.168.80.13:5000/chat'
-      `http://192.168.80.13:5000/chat?question=${newQuestion}&token=${token}`
+      `http://chatclone.site:3000/chat.php?question=${newQuestion}`
+      // `http://192.168.80.13:5000/chat?question=${newQuestion}&token=${token}`
     );
     let answer = "";
     eventSource.onmessage = function (e) {
@@ -78,18 +79,22 @@ const App = () => {
       if (e.data === "[DONE]") {
         eventSource.close();
         setCanInput(false);
+        const newStoredValues1 = [...newStoredValues, { role: "assistant", content: answer },]
+        localStorage.setItem("history", JSON.stringify(newStoredValues1));
       } else {
-        // let txt = JSON.parse(e.data).choices[0].delta.content;
-        let txt = e.data;
-        if (txt !== undefined) {
-          // answer += txt.replace(/(?:\n|\s|\r\n|\r|\n\n)/g, "<br>");
-          answer += txt;
-          // // answer += txt;
-          setStoredValues([
-            ...newStoredValues,
-            { role: "assistant", content: answer },
-          ]);
-          localStorage.setItem("history", storedValues);
+        try {
+          let re = JSON.parse(e.data)
+          let txt = re.choices[0].delta.content ? re.choices[0].delta.content : '';
+          if (txt !== undefined) {
+            answer += txt.replace(/(?:\n|\r\n|\r|\n\n)/g, "<br>");
+            // answer += txt;
+            // // answer += txt;
+            setStoredValues([
+              ...newStoredValues,
+              { role: "assistant", content: answer},
+            ]);
+          }
+        } catch (d) {
         }
       }
     };
@@ -97,6 +102,7 @@ const App = () => {
       console.log(e);
       eventSource.close();
     };
+
     setNewQuestion("");
     // axios
     //   .get(
@@ -150,7 +156,7 @@ const App = () => {
   return (
     <div className="App w-full h-full">
       <div className="h-full relative max-w-full">
-        <AnswerSection storedValues={storedValues} />
+        <AnswerSection storedValues={storedValues} canInput={canInput}/>
         <FormSection generateResponse={GenerateResponse} canInput={canInput} />
       </div>
     </div>
