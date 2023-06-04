@@ -1,7 +1,9 @@
 import { useState } from "react";
-import { Input, Button, Space, Modal,Drawer } from "antd";
-import { AccountBookOutlined, ClearOutlined } from '@ant-design/icons'
+import { Input, Button, Space, Modal, Drawer, Tabs } from "antd";
+import { AccountBookOutlined, ClearOutlined, UserOutlined } from '@ant-design/icons'
 import { createFromIconfontCN } from "@ant-design/icons";
+import PersonalSetting from "./PersonalSetting";
+import TopUP from "./TopUp";
 //引入阿里IconFont图标
 const IconFont = createFromIconfontCN({
   scriptUrl: "//at.alicdn.com/t/c/font_3973055_x1qwjo6x41.js",
@@ -10,6 +12,8 @@ const { TextArea } = Input;
 const FormSection = ({ generateResponse, canInput }) => {
   const [newQuestion, setNewQuestion] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [menuOpened, setMenuOpened] = useState(false);
+  const [activeKey, setActiveKey] = useState('0');
   //回车提交，阻止换行
   const onPressEnter = (e) => {
     e.preventDefault()
@@ -30,16 +34,33 @@ const FormSection = ({ generateResponse, canInput }) => {
     setIsModalOpen(false)
     window.location.reload()
   }
+  const goTopUp = () => {
+    setMenuOpened(true);
+    setActiveKey('1')
+  }
+  const showMenu = () => {
+    setMenuOpened(true);
+  };
+  const closeMenu = () => {
+    setMenuOpened(false);
+    setActiveKey('0')
+  };
+  const switchTab = (newActiveKey) => {
+    setActiveKey(newActiveKey);
+  };
   return (
     <div className="footer w-full pt-7 pb-14 fixed bottom-0">
       <div className="tools px-4 mb-2 w-3/5 mt-0 mx-auto flex justify-end">
-        <Space className="pr-10"><Button title="充值" icon={<AccountBookOutlined style={{ verticalAlign: 'middle' }} /> }></Button><Button title="清除历史记录" icon={<ClearOutlined style={{ verticalAlign: 'middle' }} />} onClick={showConfirmClear}></Button></Space>
+        <Space className="pr-10"><Button title="充值" onClick={goTopUp} icon={<AccountBookOutlined style={{ verticalAlign: 'middle' }} />}></Button><Button title="清除历史记录" icon={<ClearOutlined style={{ verticalAlign: 'middle' }} />} onClick={showConfirmClear}></Button></Space>
       </div>
-      <Modal title="确认" width="150" centered open={isModalOpen} onOk={confirmClear} onCancel={hiddenConfirmClear}>
+      <Modal title="确认" width={250} cancelText="取消" okText="确认" centered open={isModalOpen} onOk={confirmClear} onCancel={hiddenConfirmClear}>
         <p>确定清空聊天记录吗？</p>
       </Modal>
       <div className="form-section mx-auto w-3/5 mobile:w-full px-2 flex bg-white items-center">
         <Space.Compact style={{ width: "100%", position: "relative" }}>
+
+          <div className="profile pr-2 hover:cursor-pointer flex flex-col justify-center" onClick={showMenu} title="个人设置"><UserOutlined style={{ fontSize: "30px", height: '34px', verticalAlign: "middle" }} /></div>
+
           <TextArea
             autoSize={{ minRows: 2 }}
             className="form-control mr-2.5"
@@ -63,6 +84,36 @@ const FormSection = ({ generateResponse, canInput }) => {
           </div>
         </Space.Compact>
       </div>
+      <Drawer
+        placement="bottom"
+        closable={false}
+        onClose={closeMenu}
+        open={menuOpened}
+        destroyOnClose={true}
+        height='60%'
+        key="bottom"
+      >
+        <div className="setting w-3/5 mt-0 mx-auto">
+          <Tabs
+            onChange={switchTab}
+            activeKey={activeKey}
+            destroyInactiveTabPane={true}
+            items={[
+              {
+                label: '个人设置',
+                key: '0',
+                children: <PersonalSetting />
+              },
+              {
+                label: '充值',
+                key: '1',
+                children: <TopUP />
+              }
+            ]
+            }
+          />
+        </div>
+      </Drawer>
       <div className="description"></div>
     </div>
   );

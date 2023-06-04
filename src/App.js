@@ -35,15 +35,15 @@ import { message } from "antd";
 const App = () => {
   const [storedValues, setStoredValues] = useState([]);
 
-  // const token = localStorage.getItem("token");
+  const token = localStorage.getItem("token");
   const navigate = useNavigate();
-  // useEffect(() => {
-  //   if (token) {
-  //     return;
-  //   } else {
-  //     navigate("/login");
-  //   }
-  // }, [navigate, token]);
+  useEffect(() => {
+    if (token) {
+      return;
+    } else {
+      navigate("/login");
+    }
+  }, [navigate, token]);
   useEffect(() => {
     const history = localStorage.getItem("history")
       ? localStorage.getItem("history")
@@ -68,95 +68,93 @@ const App = () => {
     setStoredValues(newStoredValues);
     // console.log(storedValues);
     localStorage.setItem("history", JSON.stringify(newStoredValues));
-    const eventSource = new EventSource(
-      // 'http://192.168.80.13:5000/chat'
-      `http://chatclone.site:3000/chat.php?question=${newQuestion}`
-      // `http://192.168.80.13:5000/chat?question=${newQuestion}&token=${token}`
-    );
-    let answer = "";
-    eventSource.onmessage = function (e) {
-      // console.log(e.data)
-      if (e.data === "[DONE]") {
-        eventSource.close();
-        setCanInput(false);
-        const newStoredValues1 = [...newStoredValues, { role: "assistant", content: answer },]
-        localStorage.setItem("history", JSON.stringify(newStoredValues1));
-      } else {
-        try {
-          let re = JSON.parse(e.data)
-          let txt = re.choices[0].delta.content ? re.choices[0].delta.content : '';
-          if (txt !== undefined) {
-            answer += txt.replace(/(?:\n|\r\n|\r|\n\n)/g, "<br>");
-            // answer += txt;
-            // // answer += txt;
-            setStoredValues([
-              ...newStoredValues,
-              { role: "assistant", content: answer},
-            ]);
-          }
-        } catch (d) {
-        }
-      }
-    };
-    eventSource.onerror = function (e) {
-      console.log(e);
-      eventSource.close();
-    };
-
-    setNewQuestion("");
-    // axios
-    //   .get(
-    //     `http://192.168.80.13:5000/chat?question=${newQuestion}&token=${token}`
-    //   )
-    //   .then((res) => {
-    //     if (res.data.code) {
-    //       message.info({
-    //         duration: 3,
-    //         content: res.data.msg,
-    //         // onClose: () => {
-    //         //   localStorage.removeItem("token");
-    //         //   navigate("/");
-    //         // },
-    //       });
-    //     } else {
-    //       const eventSource = new EventSource(
-    //         // 'http://192.168.80.13:5000/chat'
-    //         `http://192.168.80.13:5000/chat?question=${newQuestion}&token=${token}`
-    //       );
-    //       let answer = "";
-    //       eventSource.onmessage = function (e) {
-    //         // console.log(e.data)
-    //         if (e.data === "[DONE]") {
-    //           eventSource.close();
-    //           setCanInput(false);
-    //         } else {
-    //           // let txt = JSON.parse(e.data).choices[0].delta.content;
-    //           let txt = e.data;
-    //           if (txt !== undefined) {
-    //             console.log("=>", txt);
-    //             // answer += txt.replace(/(?:\n|\s|\r\n|\r|\n\n)/g, "<br>");
-    //             answer += txt;
-    //             // // answer += txt;
-    //             setStoredValues([
-    //               ...newStoredValues,
-    //               { role: "assistant", content: answer },
-    //             ]);
-    //             localStorage.setItem("history", storedValues);
-    //           }
-    //         }
-    //       };
-    //       eventSource.onerror = function (e) {
-    //         console.log(e);
-    //         eventSource.close();
-    //       };
-    //       setNewQuestion("");
+    // const eventSource = new EventSource(
+    //   // 'http://192.168.80.13:5000/chat'
+    //   // `http://192.168.80.13:5000/chat?question=${newQuestion}&token=${token}`
+    // );
+    // let answer = "";
+    // eventSource.onmessage = function (e) {
+    //   // console.log(e.data)
+    //   if (e.data === "[DONE]") {
+    //     eventSource.close();
+    //     setCanInput(false);
+    //     const newStoredValues1 = [...newStoredValues, { role: "assistant", content: answer },]
+    //     localStorage.setItem("history", JSON.stringify(newStoredValues1));
+    //   } else {
+    //     try {
+    //       let re = JSON.parse(e.data)
+    //       let txt = re.choices[0].delta.content ? re.choices[0].delta.content : '';
+    //       if (txt !== undefined) {
+    //         answer += txt.replace(/(?:\n|\r\n|\r|\n\n)/g, "<br>");
+    //         // answer += txt;
+    //         // // answer += txt;
+    //         setStoredValues([
+    //           ...newStoredValues,
+    //           { role: "assistant", content: answer},
+    //         ]);
+    //       }
+    //     } catch (d) {
     //     }
-    //   });
+    //   }
+    // };
+    // eventSource.onerror = function (e) {
+    //   console.log(e);
+    //   eventSource.close();
+    // };
+
+    // setNewQuestion("");
+    axios
+      .get(
+        `http://192.168.80.13:5000/chat?question=${newQuestion}&token=${token}`
+      )
+      .then((res) => {
+        if (res.data.code) {
+          message.info({
+            duration: 3,
+            content: res.data.msg,
+            onClose: () => {
+              localStorage.removeItem("token");
+              navigate("/");
+            },
+          });
+        } else {
+          const eventSource = new EventSource(
+            `http://192.168.80.13:5000/chat?question=${newQuestion}&token=${token}`
+          );
+          let answer = "";
+          eventSource.onmessage = function (e) {
+            // console.log(e.data)
+            if (e.data === "[DONE]") {
+              eventSource.close();
+              setCanInput(false);
+              const newStoredValues1 = [...newStoredValues, { role: "assistant", content: answer },]
+              localStorage.setItem("history", JSON.stringify(newStoredValues1));
+            } else {
+              // let txt = JSON.parse(e.data).choices[0].delta.content;
+              let txt = e.data;
+              if (txt !== undefined) {
+                // console.log("=>", txt);
+                // answer += txt.replace(/(?:\n|\s|\r\n|\r|\n\n)/g, "<br>");
+                answer += txt;
+                setStoredValues([
+                  ...newStoredValues,
+                  { role: "assistant", content: answer },
+                ]);
+              }
+            }
+          };
+          eventSource.onerror = function (e) {
+            console.log(e);
+            eventSource.close();
+          };
+          setNewQuestion("");
+        }
+      });
   };
   return (
     <div className="App w-full h-full">
       <div className="h-full relative max-w-full">
-        <AnswerSection storedValues={storedValues} canInput={canInput}/>
+        <AnswerSection storedValues={storedValues} canInput={canInput} />
         <FormSection generateResponse={GenerateResponse} canInput={canInput} />
       </div>
     </div>
