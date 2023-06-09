@@ -50,7 +50,7 @@ const FormSection = ({ generateResponse, canInput }) => {
   };
   return (
     <div className="footer w-full pt-7 pb-14 fixed bottom-0">
-      <div className="tools px-4 mb-2 w-3/5 mt-0 mx-auto flex justify-end">
+      <div className="tools px-4 mb-2 mobile:w-11/12 w-3/5 mt-0 mx-auto flex justify-end">
         <Space className="pr-10"><Button title="充值" onClick={goTopUp} icon={<AccountBookOutlined style={{ verticalAlign: 'middle' }} />}></Button><Button title="清除历史记录" icon={<ClearOutlined style={{ verticalAlign: 'middle' }} />} onClick={showConfirmClear}></Button></Space>
       </div>
       <Modal title="确认" width={250} cancelText="取消" okText="确认" centered open={isModalOpen} onOk={confirmClear} onCancel={hiddenConfirmClear}>
@@ -90,10 +90,10 @@ const FormSection = ({ generateResponse, canInput }) => {
         onClose={closeMenu}
         open={menuOpened}
         destroyOnClose={true}
-        height='60%'
+        height='70%'
         key="bottom"
       >
-        <div className="setting w-3/5 mt-0 mx-auto">
+        <div className="setting mobile:w-11/12 w-3/5 mt-0 mx-auto">
           <Tabs
             onChange={switchTab}
             activeKey={activeKey}

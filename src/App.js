@@ -47,7 +47,7 @@ const App = () => {
   useEffect(() => {
     const history = localStorage.getItem("history")
       ? localStorage.getItem("history")
-      : '[]';
+      : "[]";
     setStoredValues(JSON.parse(history));
     // console.log(storedValues);
   }, []);
@@ -59,10 +59,12 @@ const App = () => {
   //   uuid = getCookie("id");
   // }
   // const USER_ID = uuid;
+  const [loading, setLoading] = useState(false);
   const [canInput, setCanInput] = useState(false);
   const GenerateResponse = async (newQuestion, setNewQuestion, canInput) => {
     //将文本question变为对象
     setCanInput(canInput);
+    setLoading(true);
     const comleteQuestion = { role: "user", content: newQuestion };
     const newStoredValues = [...storedValues, comleteQuestion];
     setStoredValues(newStoredValues);
@@ -105,7 +107,7 @@ const App = () => {
     // setNewQuestion("");
     axios
       .get(
-        `http://192.168.80.13:5000/chat?question=${newQuestion}&token=${token}`
+        `http://shunyuanchat.site:8080/api/chat?question=${newQuestion}&token=${token}`
       )
       .then((res) => {
         if (res.data.code) {
@@ -119,15 +121,19 @@ const App = () => {
           });
         } else {
           const eventSource = new EventSource(
-            `http://192.168.80.13:5000/chat?question=${newQuestion}&token=${token}`
+            `http://shunyuanchat.site/api/chat?question=${newQuestion}&token=${token}`
           );
+          setLoading(false);
           let answer = "";
           eventSource.onmessage = function (e) {
             // console.log(e.data)
             if (e.data === "[DONE]") {
               eventSource.close();
               setCanInput(false);
-              const newStoredValues1 = [...newStoredValues, { role: "assistant", content: answer },]
+              const newStoredValues1 = [
+                ...newStoredValues,
+                { role: "assistant", content: answer },
+              ];
               localStorage.setItem("history", JSON.stringify(newStoredValues1));
             } else {
               // let txt = JSON.parse(e.data).choices[0].delta.content;
@@ -154,7 +160,11 @@ const App = () => {
   return (
     <div className="App w-full h-full">
       <div className="h-full relative max-w-full">
-        <AnswerSection storedValues={storedValues} canInput={canInput} />
+        <AnswerSection
+          storedValues={storedValues}
+          canInput={canInput}
+          loading={loading}
+        />
         <FormSection generateResponse={GenerateResponse} canInput={canInput} />
       </div>
     </div>

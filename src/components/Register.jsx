@@ -15,7 +15,7 @@ export default function Login() {
   };
   const onFinish = (values) => {
     axios
-      .post("http://192.168.80.13:5000/register", qs.stringify(values))
+      .post("http://shunyuanchat.site:8080/api/register", qs.stringify(values))
       .then((res) => {
         console.log(res);
         if (res.data.code === 1) {
@@ -62,7 +62,7 @@ export default function Login() {
   const [maskVisible, setMaskVisible] = useState(false);
   return (
     <div className="w-full h-screen flex flex-col justify-center items-center">
-      <div className="w-96">
+      <div className="w-96 mobile:w-11/12">
         <p className="text-center m-4">注册账号</p>
         <Form
           name="login"

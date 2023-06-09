@@ -17,7 +17,7 @@ export default function Login() {
   const onFinish = (values) => {
     // console.log("Received values of form: ", values);
     axios
-      .post("http://192.168.80.13:5000/login", qs.stringify(values))
+      .post("http://shunyuanchat.site:8080/api/login", qs.stringify(values))
       .then((res) => {
         console.log(res.data);
         if (res.data.code === 1) {
@@ -36,7 +36,7 @@ export default function Login() {
   };
   return (
     <div className="w-full h-screen flex flex-col justify-center items-center">
-      <div className="w-96">
+      <div className="w-96 mobile:w-11/12">
         <p className="text-center m-4">请登录</p>
         <Form name="login" className="login-form" onFinish={onFinish}>
           <Form.Item

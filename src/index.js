@@ -1,28 +1,51 @@
-import React from 'react';
-import { createBrowserRouter,RouterProvider } from 'react-router-dom';
-import ReactDOM from 'react-dom/client';
-import './index.scss';
-import App from './App';
-import Login from './components/Login'
-import Register from './components/Register'
-import reportWebVitals from './reportWebVitals';
-import ErrorPage from './components/Error';
-const router = createBrowserRouter([
+import React from "react";
+import { createBrowserRouter, createHashRouter, RouterProvider } from "react-router-dom";
+import ReactDOM from "react-dom/client";
+import "./index.scss";
+import App from "./App";
+import Login from "./components/Login";
+import Register from "./components/Register";
+import reportWebVitals from "./reportWebVitals";
+import ErrorPage from "./components/Error";
+import HomePage from "./admin/HomePage";
+import Welcome from "./admin/Welcome"
+import UserManager from "./admin/UserManager";
+import TopUpManager from "./admin/TopUpManager";
+const router = createHashRouter([
   {
-    path:"/",
-    element:<App />,
-    errorElement:<ErrorPage />
+    path: "/",
+    element: <App />,
+    errorElement: <ErrorPage />,
   },
   {
-    path:"/login",
-    element:<Login />
+    path: "/login",
+    element: <Login />,
   },
   {
-    path:"/register",
-    element:<Register />
+    path: "/register",
+    element: <Register />,
   },
-])
-const root = ReactDOM.createRoot(document.getElementById('root'));
+  {
+    path: "/admin",
+    element: <HomePage />,
+    children: [
+      {
+        path: "/admin",
+        element: <Welcome />,
+      },
+      {
+        path: "/admin/user-manager",
+        element: <UserManager />,
+      },
+      {
+        path: "/admin/topup-manager",
+        element: <TopUpManager />,
+      },
+      
+    ],
+  },
+]);
+const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <RouterProvider router={router} />
