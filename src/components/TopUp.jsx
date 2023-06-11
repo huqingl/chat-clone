@@ -54,7 +54,7 @@ export default function TopUP() {
     }
     return (
         <div className="w-full mt-6">
-            <div className="balance"><span>Token 余额：</span><span>1000</span><Button className="ml-4" onClick={showInputCode}>兑换码充值</Button><p className="float-right pt-2">参考价：100万 Token = 100RMB</p></div>
+            <div className="balance"><span>Token 余额：</span><span>1000</span><Button className="ml-4" onClick={showInputCode}>兑换码充值</Button><p className="float-right mobile:float-none pt-2">参考价：100万 Token = 100RMB</p></div>
             <div className={inputTokenCode ? "block" : "hidden"}>
                 <p className="mt-2">兑换码：</p>
                 <Input className="my-2" placeholder="请输入兑换码" maxLength={10} onChange={(e) => tokenCheck(e)} />

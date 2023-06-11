@@ -107,7 +107,7 @@ const App = () => {
     // setNewQuestion("");
     axios
       .get(
-        `http://shunyuanchat.site:8080/api/chat?question=${newQuestion}&token=${token}`
+        `http://shunyuanchat.site/api/chat?question=${newQuestion}&token=${token}`
       )
       .then((res) => {
         if (res.data.code) {
@@ -152,6 +152,16 @@ const App = () => {
           eventSource.onerror = function (e) {
             console.log(e);
             eventSource.close();
+            setCanInput(false);
+            const newStoredValues2 = [
+              ...newStoredValues,
+              { role: "assistant", content: '网络似乎遇到问题，请重新提问' },
+            ];
+            localStorage.setItem("history", JSON.stringify(newStoredValues2));
+            setStoredValues([
+              ...newStoredValues,
+              { role: "assistant", content: '网络似乎遇到问题，请重新提问' },
+            ]);
           };
           setNewQuestion("");
         }

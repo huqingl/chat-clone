@@ -15,7 +15,7 @@ export default function Login() {
   };
   const onFinish = (values) => {
     axios
-      .post("http://shunyuanchat.site:8080/api/register", qs.stringify(values))
+      .post("http://shunyuanchat.site/api/register", qs.stringify(values))
       .then((res) => {
         console.log(res);
         if (res.data.code === 1) {

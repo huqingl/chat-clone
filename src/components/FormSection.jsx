@@ -49,7 +49,7 @@ const FormSection = ({ generateResponse, canInput }) => {
     setActiveKey(newActiveKey);
   };
   return (
-    <div className="footer w-full pt-7 pb-14 fixed bottom-0">
+    <div className="footer w-full pt-7 pb-14 fixed bottom-0 bg-white">
       <div className="tools px-4 mb-2 mobile:w-11/12 w-3/5 mt-0 mx-auto flex justify-end">
         <Space className="pr-10"><Button title="充值" onClick={goTopUp} icon={<AccountBookOutlined style={{ verticalAlign: 'middle' }} />}></Button><Button title="清除历史记录" icon={<ClearOutlined style={{ verticalAlign: 'middle' }} />} onClick={showConfirmClear}></Button></Space>
       </div>

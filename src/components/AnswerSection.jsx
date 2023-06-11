@@ -9,7 +9,6 @@ const IconFont = createFromIconfontCN({
 
 const AnswerSection = ({ storedValues, canInput, loading }) => {
   //随着内容增加，自动滚动到底部
-  const cursor = '<span class="cursor"></span>';
   const messagesEndRef = useRef(null);
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });

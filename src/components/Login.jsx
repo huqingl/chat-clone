@@ -17,7 +17,7 @@ export default function Login() {
   const onFinish = (values) => {
     // console.log("Received values of form: ", values);
     axios
-      .post("http://shunyuanchat.site:8080/api/login", qs.stringify(values))
+      .post("http://shunyuanchat.site/api/login", qs.stringify(values))
       .then((res) => {
         console.log(res.data);
         if (res.data.code === 1) {
