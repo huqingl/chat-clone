@@ -124,11 +124,15 @@ const App = () => {
         } else {
           const eventSource = new EventSource(
             `http://shunyuanchat.site/api/chat?question=${newQuestion}&token=${token}`
-            // `http://192.168.80.13:5000/api1/chat?question=${newQuestion}&token=${token}`
+            // `http://shunyuanchat.site:7000/api1/chat.php?question=${newQuestion}&userid=${userid}`
           );
-          setLoading(false);
+          eventSource.onopen = function () {
+            setLoading(false);
+          }
           let answer = "";
           eventSource.onmessage = function (e) {
+            console.log(eventSource.readyState)
+
             if (e.data === "[DONE]") {
               eventSource.close();
               setCanInput(false);
@@ -155,7 +159,7 @@ const App = () => {
                     { role: "assistant", content: answer },
                   ]);
                 }
-              } catch (d) {}
+              } catch (d) { }
             }
           };
           eventSource.onerror = function (e) {

@@ -52,11 +52,11 @@ const AnswerSection = ({ storedValues, canInput, loading }) => {
                 >
                   <div className="answer-section mobile:w-11/12 w-3/5 mt-0 mx-auto text-base ">
                     <div className="answer flex py-5">
-                      <div className="logo pr-5 mobile:pr-2.5">
+                      <div className="logo pr-5 .shrink-0 mobile:pr-2.5">
                         <IconFont type={person} style={logoColor} />
                       </div>
                       <div
-                        className="answer-content w-full text-base pt-0.5"
+                        className="answer-content basis-auto flex-1 overflow-hidden text-base pt-0.5"
                         style={{ whiteSpace: "pre-line" }}
                       >
                         {/* <HighlightedResponse response={value.content} /> */}
