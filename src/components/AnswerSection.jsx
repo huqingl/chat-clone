@@ -1,6 +1,6 @@
 import { createFromIconfontCN } from "@ant-design/icons";
 import { Spin } from "antd";
-import HighlightedResponse from "./HighlightedResponce";
+// import HighlightedResponse from "./HighlightedResponce";
 import { useEffect, useRef } from "react";
 //引入阿里IconFont图标
 const IconFont = createFromIconfontCN({
@@ -56,10 +56,11 @@ const AnswerSection = ({ storedValues, canInput, loading }) => {
                         <IconFont type={person} style={logoColor} />
                       </div>
                       <div
-                        className="answer-content text-base pt-0.5"
+                        className="answer-content w-full text-base pt-0.5"
                         style={{ whiteSpace: "pre-line" }}
                       >
-                        <HighlightedResponse response={value.content} />
+                        {/* <HighlightedResponse response={value.content} /> */}
+                        <div className="answer" dangerouslySetInnerHTML={{__html:value.content}}></div>
                         <span
                           className={
                             value.role === "assistant" &&

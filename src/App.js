@@ -5,6 +5,8 @@ import { useNavigate } from "react-router-dom";
 import "./App.scss";
 import axios from "axios";
 import { message } from "antd";
+import HighlightedResponse from "./components/HighlightedResponce";
+
 //获取cookie值，根据键名
 // function getCookie(cname) {
 //   let name = cname + "=";
@@ -34,8 +36,8 @@ import { message } from "antd";
 // const USER_ID = getCookie("id") == ""?uuidv4():getCookie("id")
 const App = () => {
   const [storedValues, setStoredValues] = useState([]);
-
   const token = localStorage.getItem("token");
+  const userid = localStorage.getItem("userid");
   const navigate = useNavigate();
   useEffect(() => {
     if (token) {
@@ -122,31 +124,38 @@ const App = () => {
         } else {
           const eventSource = new EventSource(
             `http://shunyuanchat.site/api/chat?question=${newQuestion}&token=${token}`
+            // `http://192.168.80.13:5000/api1/chat?question=${newQuestion}&token=${token}`
           );
           setLoading(false);
           let answer = "";
           eventSource.onmessage = function (e) {
-            // console.log(e.data)
             if (e.data === "[DONE]") {
               eventSource.close();
               setCanInput(false);
+              const formated = HighlightedResponse(answer)
+              setStoredValues([
+                ...newStoredValues,
+                { role: "assistant", content: formated },
+              ]);
               const newStoredValues1 = [
                 ...newStoredValues,
-                { role: "assistant", content: answer },
+                { role: "assistant", content: formated },
               ];
               localStorage.setItem("history", JSON.stringify(newStoredValues1));
             } else {
-              // let txt = JSON.parse(e.data).choices[0].delta.content;
-              let txt = e.data;
-              if (txt !== undefined) {
-                // console.log("=>", txt);
-                // answer += txt.replace(/(?:\n|\s|\r\n|\r|\n\n)/g, "<br>");
-                answer += txt;
-                setStoredValues([
-                  ...newStoredValues,
-                  { role: "assistant", content: answer },
-                ]);
-              }
+              try {
+                // let txt = JSON.parse(e.data).choices[0].delta.content;
+                let txt = JSON.parse(e.data)['format_data'];
+                if (txt !== undefined) {
+                  // console.log("=>", txt);
+                  // answer += txt.replace(/(?:\n|\r\n|\r|\n\n)/g, "<br>");
+                  answer += txt;
+                  setStoredValues([
+                    ...newStoredValues,
+                    { role: "assistant", content: answer },
+                  ]);
+                }
+              } catch (d) {}
             }
           };
           eventSource.onerror = function (e) {
@@ -155,12 +164,12 @@ const App = () => {
             setCanInput(false);
             const newStoredValues2 = [
               ...newStoredValues,
-              { role: "assistant", content: '网络似乎遇到问题，请重新提问' },
+              { role: "assistant", content: "网络似乎遇到问题，请重新提问" },
             ];
             localStorage.setItem("history", JSON.stringify(newStoredValues2));
             setStoredValues([
               ...newStoredValues,
-              { role: "assistant", content: '网络似乎遇到问题，请重新提问' },
+              { role: "assistant", content: "网络似乎遇到问题，请重新提问" },
             ]);
           };
           setNewQuestion("");

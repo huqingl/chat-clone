@@ -21,24 +21,31 @@
 //   );
 // }
 
-import Prism from 'prismjs';
-import 'prismjs/components/prism-javascript';
-import 'prismjs/components/prism-php';
-import 'prismjs/components/prism-python';
+import Prism from "prismjs";
+import "prismjs/themes/prism-okaidia.css";
+import "prismjs/components/prism-markup-templating.js"
+import "prismjs/components/prism-markup";
+import "prismjs/components/prism-javascript";
+import "prismjs/components/prism-php";
+import "prismjs/components/prism-python";
+// import "prismjs/themes/prism.css";
 
-import 'prismjs/themes/prism.css';
 const codeBlockRegex = /```([\w-]+)?\n([^`]+)```/g;
-function HighlightedResponse({ response }) {
+function HighlightedResponse(response) {
   const processedResponse = response.replace(
     codeBlockRegex,
-    (_, lang, code) =>
-      `<pre><code class="language-${lang || 'text'}">${Prism.highlight(
+    (_, lang, code) => {
+      const highlightedCode = Prism.highlight(
         code.trim(),
         Prism.languages[lang] || Prism.languages.markup
-      )}</code></pre>`
+      );
+      const languageClass = `language-${lang || "markup"}`;
+      return `<pre><code class="${languageClass}">${highlightedCode}</code></pre>`;
+    }
   );
 
-  return <div dangerouslySetInnerHTML={{ __html: processedResponse }} />;
+  // return <div dangerouslySetInnerHTML={{ __html: processedResponse }} />;
+  return processedResponse;
 }
 
 export default HighlightedResponse;

@@ -21,6 +21,7 @@ export default function Login() {
       .then((res) => {
         console.log(res.data);
         if (res.data.code === 1) {
+          localStorage.setItem('userid',values.phone)
           message.success({
             duration: 3,
             content: res.data.msg + ",即将跳转",
