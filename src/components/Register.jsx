@@ -8,14 +8,19 @@ import axios from "axios";
 import qs from "qs";
 export default function Login() {
   const navigate = useNavigate();
-  const [isMobile, setIsMobile] = useState(false);
-  const onChange = (values) => {
-    const result = /^1[3|4|5|7|8][0-9]\d{8}$/.test(values.phone);
-    setIsMobile(result);
+  const [isEmail, setIsEmail] = useState(false);
+  const [email, setEmail] = useState("");
+  const onChange = (_,allvalues) => {
+    console.log(allvalues)
+    const result = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/.test(
+      allvalues.email
+    );
+    setIsEmail(result);
+    setEmail(allvalues.email);
   };
   const onFinish = (values) => {
     axios
-      .post("http://shunyuanchat.site/api/register", qs.stringify(values))
+      .post("/api/register", qs.stringify(values))
       .then((res) => {
         console.log(res);
         if (res.data.code === 1) {
@@ -40,6 +45,25 @@ export default function Login() {
     setMaskVisible(false);
     setCanClick(true);
     setTime(60);
+    axios
+      .post(
+        "/api/register/send_mail",
+        qs.stringify({ email: email })
+      )
+      .then((res) => {
+        console.log(res.data);
+        if (res.data.code === 1) {
+          message.success({
+            duration: 2,
+            content: res.data.msg + ", 请到邮箱中查看",
+            // onClose: () => {
+            //   navigate("/login");
+            // },
+          });
+        } else {
+          message.info({ duration: 2, content: res.data.msg });
+        }
+      });
   };
   const [canClick, setCanClick] = useState(false);
   const [time, setTime] = useState(0);
@@ -67,20 +91,24 @@ export default function Login() {
         <Form
           name="login"
           className="login-form"
+          validateTrigger="onBlur"
           onFinish={onFinish}
           onValuesChange={onChange}
         >
           <Form.Item
-            name="phone"
+            name="email"
             rules={[
               {
+                type: "email",
+                message: "请输入正确的邮箱",
+              },
+              {
                 required: true,
-                pattern: /^1[3|4|5|7|8][0-9]\d{8}$/,
-                message: "请输入正确的手机号",
+                message: "请输入正确的邮箱",
               },
             ]}
           >
-            <Input addonBefore="+86" placeholder="请输入您的手机号" />
+            <Input placeholder="请输入您的邮箱" />
           </Form.Item>
           <Form.Item
             name="captcha"
@@ -102,7 +130,7 @@ export default function Login() {
               <Button
                 type="primary"
                 className="bg-blue-400"
-                disabled={canClick || !isMobile}
+                disabled={canClick || !isEmail}
                 onClick={showCaptcha}
               >
                 {time ? `${time}秒后重新获取` : "获取验证码"}
@@ -114,6 +142,7 @@ export default function Login() {
             rules={[
               {
                 required: true,
+                max:20,
                 message: "请输入您的昵称",
               },
             ]}
@@ -125,6 +154,7 @@ export default function Login() {
             rules={[
               {
                 required: true,
+                max:20,
                 message: "请输入您的密码",
               },
             ]}
@@ -142,6 +172,7 @@ export default function Login() {
             rules={[
               {
                 required: true,
+                max:20,
                 message: "请重复您的密码",
               },
               ({ getFieldValue }) => ({

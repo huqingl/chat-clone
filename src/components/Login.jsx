@@ -17,13 +17,13 @@ export default function Login() {
   const onFinish = (values) => {
     // console.log("Received values of form: ", values);
     axios
-      .post("http://shunyuanchat.site/api/login", qs.stringify(values))
+      .post("/api/login", qs.stringify(values))
       .then((res) => {
         console.log(res.data);
         if (res.data.code === 1) {
-          localStorage.setItem('userid',values.phone)
+          localStorage.setItem('userid',values.email)
           message.success({
-            duration: 3,
+            duration: 2,
             content: res.data.msg + ",即将跳转",
             onClose: () => {
               window.localStorage.setItem("token", res.data.token);
@@ -31,7 +31,7 @@ export default function Login() {
             },
           });
         } else {
-          message.info({ duration: 3, content: res.data.msg });
+          message.info({ duration: 2, content: res.data.msg });
         }
       });
   };
@@ -41,15 +41,19 @@ export default function Login() {
         <p className="text-center m-4">请登录</p>
         <Form name="login" className="login-form" onFinish={onFinish}>
           <Form.Item
-            name="phone"
+            name="email"
             rules={[
               {
+                type: "email",
+                message: "请输入正确的邮箱",
+              },
+              {
                 required: true,
-                message: "请输入正确的手机号",
+                message: "请输入正确的邮箱",
               },
             ]}
           >
-            <Input prefix={<UserOutlined />} placeholder="请输入您的手机号" />
+            <Input prefix={<UserOutlined />} placeholder="请输入您的邮箱" />
           </Form.Item>
           <Form.Item
             name="password"

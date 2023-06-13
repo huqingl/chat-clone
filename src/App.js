@@ -37,7 +37,7 @@ import HighlightedResponse from "./components/HighlightedResponce";
 const App = () => {
   const [storedValues, setStoredValues] = useState([]);
   const token = localStorage.getItem("token");
-  const userid = localStorage.getItem("userid");
+  // const userid = localStorage.getItem("userid");
   const navigate = useNavigate();
   useEffect(() => {
     if (token) {
@@ -109,7 +109,7 @@ const App = () => {
     // setNewQuestion("");
     axios
       .get(
-        `http://shunyuanchat.site/api/chat?question=${newQuestion}&token=${token}`
+        `/api/chat?question=${newQuestion}&token=${token}`
       )
       .then((res) => {
         if (res.data.code) {
@@ -123,20 +123,18 @@ const App = () => {
           });
         } else {
           const eventSource = new EventSource(
-            `http://shunyuanchat.site/api/chat?question=${newQuestion}&token=${token}`
+            `/api/chat?question=${newQuestion}&token=${token}`
             // `http://shunyuanchat.site:7000/api1/chat.php?question=${newQuestion}&userid=${userid}`
           );
           eventSource.onopen = function () {
             setLoading(false);
-          }
+          };
           let answer = "";
           eventSource.onmessage = function (e) {
-            console.log(eventSource.readyState)
-
             if (e.data === "[DONE]") {
               eventSource.close();
               setCanInput(false);
-              const formated = HighlightedResponse(answer)
+              const formated = HighlightedResponse(answer);
               setStoredValues([
                 ...newStoredValues,
                 { role: "assistant", content: formated },
@@ -149,7 +147,7 @@ const App = () => {
             } else {
               try {
                 // let txt = JSON.parse(e.data).choices[0].delta.content;
-                let txt = JSON.parse(e.data)['format_data'];
+                let txt = JSON.parse(e.data)["format_data"];
                 if (txt !== undefined) {
                   // console.log("=>", txt);
                   // answer += txt.replace(/(?:\n|\r\n|\r|\n\n)/g, "<br>");
@@ -159,7 +157,7 @@ const App = () => {
                     { role: "assistant", content: answer },
                   ]);
                 }
-              } catch (d) { }
+              } catch (d) {}
             }
           };
           eventSource.onerror = function (e) {

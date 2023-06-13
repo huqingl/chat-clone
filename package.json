@@ -11,6 +11,7 @@
     "antd": "^5.3.2",
     "axios": "^1.4.0",
     "highlight.js": "^11.7.0",
+    "http-proxy-middleware": "^2.0.6",
     "openai": "^3.2.1",
     "openai-edge": "^0.3.2",
     "prismjs": "^1.29.0",
@@ -27,7 +28,7 @@
   "homepage": ".",
   "publicPath": "/",
   "scripts": {
-    "start": "PORT=7000 react-scripts start",
+    "start": "PORT=5000 react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
