@@ -35,7 +35,44 @@ export default function UserManager() {
       title: "注册时间",
       dataIndex: "registerTime",
       key: "registerTime",
-    }
+    },
   ];
-  return <div>user</div>;
+  const userData = [
+    {
+      key: "1",
+      account: "zqb@ansuntech.com",
+      username: '朱琦斌',
+      buyedCard: 1,
+      usedTokens: 2000,
+      buyedTokens: 10000,
+      restCard:8000,
+      registerTime:'2023-01-01'
+    },
+    {
+      key: "2",
+      account: "zqb@ansuntech.com",
+      username: '房欣纯',
+      buyedCard: 1,
+      usedTokens: 2000,
+      buyedTokens: 10000,
+      restCard:8000,
+      registerTime:'2023-01-01'
+    },
+    {
+      key: "3",
+      account: "zqb@ansuntech.com",
+      username: '汤明刚',
+      buyedCard: 1,
+      usedTokens: 2000,
+      buyedTokens: 10000,
+      restCard:8000,
+      registerTime:'2023-01-01'
+    },
+    
+  ];
+  return (
+    <div className="table">
+      <Table dataSource={userData} columns={columns} />
+    </div>
+  );
 }

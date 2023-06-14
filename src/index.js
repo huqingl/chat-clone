@@ -5,6 +5,7 @@ import "./index.scss";
 import App from "./App";
 import Login from "./components/Login";
 import Register from "./components/Register";
+import ResetPassword from "./components/ResetPassword";
 import reportWebVitals from "./reportWebVitals";
 import ErrorPage from "./components/Error";
 import HomePage from "./admin/HomePage";
@@ -26,24 +27,28 @@ const router = createHashRouter([
     element: <Register />,
   },
   {
-    path: "/admin",
-    element: <HomePage />,
-    children: [
-      {
-        path: "/admin",
-        element: <Welcome />,
-      },
-      {
-        path: "/admin/user-manager",
-        element: <UserManager />,
-      },
-      {
-        path: "/admin/topup-manager",
-        element: <TopUpManager />,
-      },
-      
-    ],
+    path: "/reset",
+    element: <ResetPassword />,
   },
+  // {
+  //   path: "/admin",
+  //   element: <HomePage />,
+  //   children: [
+  //     {
+  //       path: "/admin",
+  //       element: <Welcome />,
+  //     },
+  //     {
+  //       path: "/admin/user-manager",
+  //       element: <UserManager />,
+  //     },
+  //     {
+  //       path: "/admin/topup-manager",
+  //       element: <TopUpManager />,
+  //     },
+      
+  //   ],
+  // },
 ]);
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(

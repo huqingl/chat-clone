@@ -19,7 +19,7 @@ export default function Login() {
     axios
       .post("/api/login", qs.stringify(values))
       .then((res) => {
-        console.log(res.data);
+        // console.log(res.data);
         if (res.data.code === 1) {
           localStorage.setItem('userid',values.email)
           message.success({

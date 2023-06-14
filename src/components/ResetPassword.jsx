@@ -6,11 +6,11 @@ import { Vertify } from "@alex_xu/react-slider-vertify";
 
 import axios from "axios";
 import qs from "qs";
-export default function Register() {
+export default function ResetPassword() {
   const navigate = useNavigate();
   const [isEmail, setIsEmail] = useState(false);
   const [email, setEmail] = useState("");
-  const onChange = (_,allvalues) => {
+  const onChange = (_, allvalues) => {
     // console.log(allvalues)
     const result = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/.test(
       allvalues.email
@@ -19,26 +19,29 @@ export default function Register() {
     setEmail(allvalues.email);
   };
   const onFinish = (values) => {
-    axios
-      .post("/api/register", qs.stringify(values))
-      .then((res) => {
-        // console.log(res);
-        if (res.data.code === 1) {
-          message.success({
-            duration: 3,
-            content: res.data.msg + ",即将跳转到登录界面",
-            onClose: () => {
-              navigate("/login");
-            },
-          });
-        } else {
-          message.info({ duration: 3, content: res.data.msg });
-        }
-      });
+    axios.post("/api/register", qs.stringify(values)).then((res) => {
+      if (res.data.code === 1) {
+        message.success({
+          duration: 3,
+          content: res.data.msg + ",即将跳转到登录界面",
+          onClose: () => {
+            navigate("/login");
+          },
+        });
+      } else {
+        message.info({ duration: 3, content: res.data.msg });
+      }
+    });
   };
   const showCaptcha = () => {
-    setMaskVisible(true);
-    setVisible(true);
+    axios.post("/api/reset", qs.stringify({ email: email })).then((res) => {
+      if (res.data.code === 1) {
+        setMaskVisible(true);
+        setVisible(true);
+      } else {
+        message.info({ duration: 3, content: res.data.msg });
+      }
+    });
   };
   const verifySuccess = () => {
     setVisible(false);
@@ -46,10 +49,7 @@ export default function Register() {
     setCanClick(true);
     setTime(60);
     axios
-      .post(
-        "/api/register/send_email",
-        qs.stringify({ email: email })
-      )
+      .post("/api/register/send_email", qs.stringify({ email: email }))
       .then((res) => {
         if (res.data.code === 1) {
           message.success({
@@ -86,7 +86,7 @@ export default function Register() {
   return (
     <div className="w-full h-screen flex flex-col justify-center items-center">
       <div className="w-96 mobile:w-11/12">
-        <p className="text-center m-4">注册账号</p>
+        <p className="text-center m-4">找回密码</p>
         <Form
           name="login"
           className="login-form"
@@ -137,23 +137,11 @@ export default function Register() {
             </Space.Compact>
           </Form.Item>
           <Form.Item
-            name="nickname"
-            rules={[
-              {
-                required: true,
-                max:20,
-                message: "请输入您的昵称",
-              },
-            ]}
-          >
-            <Input prefix={<UserOutlined />} placeholder="请输入您的昵称" />
-          </Form.Item>
-          <Form.Item
             name="password"
             rules={[
               {
                 required: true,
-                max:20,
+                max: 20,
                 message: "请输入您的密码",
               },
             ]}
@@ -171,7 +159,7 @@ export default function Register() {
             rules={[
               {
                 required: true,
-                max:20,
+                max: 20,
                 message: "请重复您的密码",
               },
               ({ getFieldValue }) => ({
