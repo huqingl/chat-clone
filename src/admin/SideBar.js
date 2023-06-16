@@ -1,8 +1,8 @@
-import { NavLink,useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { Menu } from "antd";
 const SideBar = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [openKeys, setOpenKeys] = useState([]);
   // function getItem(label, key, children, type) {
   //   return {
@@ -25,21 +25,30 @@ const SideBar = () => {
   // const rootSubmenuKeys = ["sub1", "sub2"];
   const navItems = [
     {
-      key:"sub1",
-      label:"用户管理"
+      key: "sub1",
+      label: "用户管理",
     },
     {
-      key:"sub2",
-      label:"充值管理"
-    }
+      key: "sub2",
+      label: "充值管理",
+    },
+    { key: "sub3", label: "联系人管理" },
   ];
-  const clickMenu = ({key}) =>{
-    if (key === 'sub1') {
-      navigate('/admin/user-manager')
-    } else if(key === 'sub2'){
-      navigate('/admin/topup-manager')
+  const clickMenu = ({ key }) => {
+    switch (key) {
+      case 'sub1':
+        navigate("/admin/user-manager");
+        break;
+      case 'sub2':
+        navigate("/admin/topup-manager");
+        break;
+      case 'sub3':
+        navigate("/admin/contact-manager")
+        break;
+      default:
+        break;
     }
-  }
+  };
   return (
     <div className="sidebar h-full  shrink-0">
       {/*<ul className="py-2">

@@ -2,7 +2,8 @@ import axios from "axios";
 import { Table, Button, Space, Modal, Form, Input } from "antd";
 import { useEffect, useState } from "react";
 export default function TopUpManager() {
-  const [a, setA] = useState("");
+  // const [userList, setUserList] = useState([]);
+  // const [pageTotal,setPageTotal] = useState(null)
   // useEffect(() => {
   //   axios.get("http://chatclone.site/api/1.php/api?question=abc").then((res) => {
   //     console.log(res.data);

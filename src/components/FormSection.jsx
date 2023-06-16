@@ -3,6 +3,7 @@ import { Input, Button, Space, Modal, Drawer, Tabs } from "antd";
 import { AccountBookOutlined, ClearOutlined, UserOutlined } from '@ant-design/icons'
 import { createFromIconfontCN } from "@ant-design/icons";
 import PersonalSetting from "./PersonalSetting";
+import ContactUs from "./ContactUs";
 import TopUP from "./TopUp";
 //引入阿里IconFont图标
 const IconFont = createFromIconfontCN({
@@ -108,7 +109,12 @@ const FormSection = ({ generateResponse, canInput }) => {
                 label: '充值',
                 key: '1',
                 children: <TopUP />
-              }
+              },
+              {
+                label: '联系我们',
+                key: '2',
+                children: <ContactUs />
+              },
             ]
             }
           />

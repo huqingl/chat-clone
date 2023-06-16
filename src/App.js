@@ -162,6 +162,7 @@ const App = () => {
           };
           eventSource.onerror = function (e) {
             // console.log(e);
+            setLoading(false);
             eventSource.close();
             setCanInput(false);
             const newStoredValues2 = [

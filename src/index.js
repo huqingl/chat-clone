@@ -12,6 +12,7 @@ import HomePage from "./admin/HomePage";
 import Welcome from "./admin/Welcome"
 import UserManager from "./admin/UserManager";
 import TopUpManager from "./admin/TopUpManager";
+import ContactManager from "./admin/ContactManager";
 const router = createHashRouter([
   {
     path: "/",
@@ -30,25 +31,29 @@ const router = createHashRouter([
     path: "/reset",
     element: <ResetPassword />,
   },
-  // {
-  //   path: "/admin",
-  //   element: <HomePage />,
-  //   children: [
-  //     {
-  //       path: "/admin",
-  //       element: <Welcome />,
-  //     },
-  //     {
-  //       path: "/admin/user-manager",
-  //       element: <UserManager />,
-  //     },
-  //     {
-  //       path: "/admin/topup-manager",
-  //       element: <TopUpManager />,
-  //     },
+  {
+    path: "/admin",
+    element: <HomePage />,
+    children: [
+      {
+        path: "/admin",
+        element: <Welcome />,
+      },
+      {
+        path: "/admin/user-manager",
+        element: <UserManager />,
+      },
+      {
+        path: "/admin/topup-manager",
+        element: <TopUpManager />,
+      },
+      {
+        path: "/admin/contact-manager",
+        element: <ContactManager />,
+      },
       
-  //   ],
-  // },
+    ],
+  },
 ]);
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(

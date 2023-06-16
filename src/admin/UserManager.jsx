@@ -1,5 +1,16 @@
 import { Table } from "antd";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import qs from "qs";
 export default function UserManager() {
+  const [userList, setUserList] = useState([]);
+  const [pageTotal,setPageTotal] = useState(null)
+  useEffect(() => {
+    axios.post("/api/user/get_user_info").then((res) => {
+      setUserList(res.data.data)
+      setPageTotal(res.data.total_count)
+    });
+  }, []);
   const columns = [
     {
       title: "用户帐户",
@@ -37,42 +48,22 @@ export default function UserManager() {
       key: "registerTime",
     },
   ];
-  const userData = [
-    {
-      key: "1",
-      account: "zqb@ansuntech.com",
-      username: '朱琦斌',
-      buyedCard: 1,
-      usedTokens: 2000,
-      buyedTokens: 10000,
-      restCard:8000,
-      registerTime:'2023-01-01'
-    },
-    {
-      key: "2",
-      account: "zqb@ansuntech.com",
-      username: '房欣纯',
-      buyedCard: 1,
-      usedTokens: 2000,
-      buyedTokens: 10000,
-      restCard:8000,
-      registerTime:'2023-01-01'
-    },
-    {
-      key: "3",
-      account: "zqb@ansuntech.com",
-      username: '汤明刚',
-      buyedCard: 1,
-      usedTokens: 2000,
-      buyedTokens: 10000,
-      restCard:8000,
-      registerTime:'2023-01-01'
-    },
-    
-  ];
+  const changePage = (a,b,c)=>{
+    const pageIndex = a.current
+    axios
+      .post("/api/user/get_user_info", qs.stringify({page:pageIndex}))
+      .then((res) => {
+        setUserList(res.data.data);
+      });
+  }
   return (
     <div className="table">
-      <Table dataSource={userData} columns={columns} />
+      <Table
+        dataSource={userList}
+        columns={columns}
+        pagination={{ defaultCurrent: 1, total: pageTotal, pageSize: 10 }}
+        onChange={changePage}
+      />
     </div>
   );
 }

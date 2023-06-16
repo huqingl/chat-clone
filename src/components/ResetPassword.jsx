@@ -1,8 +1,8 @@
-import { LockOutlined, UserOutlined } from "@ant-design/icons";
+import { LockOutlined } from "@ant-design/icons";
 import { Button, Space, Form, Input, message } from "antd";
 import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Vertify } from "@alex_xu/react-slider-vertify";
+// import { Vertify } from "@alex_xu/react-slider-vertify";
 
 import axios from "axios";
 import qs from "qs";
@@ -19,7 +19,7 @@ export default function ResetPassword() {
     setEmail(allvalues.email);
   };
   const onFinish = (values) => {
-    axios.post("/api/register", qs.stringify(values)).then((res) => {
+    axios.post("/api/login/find_password", qs.stringify(values)).then((res) => {
       if (res.data.code === 1) {
         message.success({
           duration: 3,
@@ -34,24 +34,14 @@ export default function ResetPassword() {
     });
   };
   const showCaptcha = () => {
-    axios.post("/api/reset", qs.stringify({ email: email })).then((res) => {
-      if (res.data.code === 1) {
-        setMaskVisible(true);
-        setVisible(true);
-      } else {
-        message.info({ duration: 3, content: res.data.msg });
-      }
-    });
-  };
-  const verifySuccess = () => {
-    setVisible(false);
-    setMaskVisible(false);
-    setCanClick(true);
-    setTime(60);
     axios
-      .post("/api/register/send_email", qs.stringify({ email: email }))
+      .post("/api/login/send_email", qs.stringify({ email: email }))
       .then((res) => {
         if (res.data.code === 1) {
+          // setMaskVisible(true);
+          // setVisible(true);
+          setCanClick(true);
+          setTime(60);
           message.success({
             duration: 3,
             content: res.data.msg + ", 请到邮箱中查看",
@@ -64,6 +54,27 @@ export default function ResetPassword() {
         }
       });
   };
+  // const verifySuccess = () => {
+  //   setVisible(false);
+  //   setMaskVisible(false);
+  //   setCanClick(true);
+  //   setTime(60);
+  //   axios
+  //     .post("/api/login/send_email", qs.stringify({ email: email }))
+  //     .then((res) => {
+  //       if (res.data.code === 1) {
+  //         message.success({
+  //           duration: 3,
+  //           content: res.data.msg + ", 请到邮箱中查看",
+  //           // onClose: () => {
+  //           //   navigate("/login");
+  //           // },
+  //         });
+  //       } else {
+  //         message.info({ duration: 3, content: res.data.msg });
+  //       }
+  //     });
+  // };
   const [canClick, setCanClick] = useState(false);
   const [time, setTime] = useState(0);
   const timer = useRef(null);
@@ -81,8 +92,8 @@ export default function ResetPassword() {
       timer.current && clearInterval(timer.current);
     }
   }, [time]);
-  const [visible, setVisible] = useState(false);
-  const [maskVisible, setMaskVisible] = useState(false);
+  // const [visible, setVisible] = useState(false);
+  // const [maskVisible, setMaskVisible] = useState(false);
   return (
     <div className="w-full h-screen flex flex-col justify-center items-center">
       <div className="w-96 mobile:w-11/12">
@@ -184,7 +195,7 @@ export default function ResetPassword() {
               htmlType="submit"
               className="w-full bg-blue-400"
             >
-              注册
+              确定
             </Button>
           </Form.Item>
 
@@ -196,7 +207,7 @@ export default function ResetPassword() {
             </Link>
           </Form.Item>
         </Form>
-        <div
+        {/* <div
           className="fixed"
           style={{
             backgroundColor: "white",
@@ -212,15 +223,15 @@ export default function ResetPassword() {
             visible={visible}
             onSuccess={verifySuccess}
           />
-        </div>
+        </div> */}
       </div>
-      <div
+      {/* <div
         className={`${
           maskVisible ? "block" : "hidden"
         } w-full h-full fixed z-10 left-0 top-0 bg-black bg-opacity-50`}
       >
         <div />
-      </div>
+      </div> */}
     </div>
   );
 }
