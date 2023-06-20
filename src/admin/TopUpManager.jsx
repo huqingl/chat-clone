@@ -1,88 +1,51 @@
-import axios from "axios";
-import { Table, Button, Space, Modal, Form, Input } from "antd";
+import { Table, Button, Space, Modal, Form, Input, message } from "antd";
 import { useEffect, useState } from "react";
+import axios from "axios";
+import qs from "qs";
 export default function TopUpManager() {
-  // const [userList, setUserList] = useState([]);
-  // const [pageTotal,setPageTotal] = useState(null)
-  // useEffect(() => {
-  //   axios.get("http://chatclone.site/api/1.php/api?question=abc").then((res) => {
-  //     console.log(res.data);
-  //     const a = res.data;
-  //     setA(a)
-  //   });
-  // }, [a]);
+  const [topUpList, setTopUpList] = useState([]);
+  const [pageTotal, setPageTotal] = useState(null);
+  const token = localStorage.getItem("atoken");
+  const [formValue, setFormValue] = useState({});
+  useEffect(() => {
+    axios
+      .post("/api/card/card_code_list", qs.stringify({ token: token }))
+      .then((res) => {
+        setTopUpList(res.data.data);
+        setPageTotal(res.data.total);
+      });
+  }, [token]);
   const columns = [
     {
       title: "CardKey",
-      dataIndex: "cardkey",
-      key: "cardkey",
-    },
-    {
-      title: "描述",
-      dataIndex: "desc",
-      key: "desc",
+      dataIndex: "card_code",
+      key: "card_code",
     },
     {
       title: "点数",
-      dataIndex: "tokennum",
-      key: "tokennum",
+      dataIndex: "card_code_tokens",
+      key: "card_code_tokens",
     },
     {
       title: "绑定用户",
-      dataIndex: "binduser",
-      key: "binduser",
+      dataIndex: "email",
+      key: "email",
     },
     {
       title: "激活时间",
-      dataIndex: "activedtime",
-      key: "activedtime",
+      dataIndex: "pay_time",
+      key: "pay_time",
     },
     {
       title: "生成时间",
-      dataIndex: "createdtime",
-      key: "createdtime",
+      dataIndex: "create_time",
+      key: "create_time",
     },
   ];
-  const topUpData = [
-    {
-      cardkey: "FAGADE1",
-      key: "1",
-      desc: "朱琦斌-1220",
-      tokennum: 10000,
-      binduser: "zqb@ansuntech.com",
-      activedtime: "20220202",
-      createdtime: "20220102",
-    },
-    {
-      cardkey: "FAGADE2",
-      key: "2",
-      desc: "房欣纯-1220",
-      tokennum: 10000,
-      binduser: "fxc@ansuntech.com",
-      activedtime: "20220302",
-      createdtime: "20220202",
-    },
-    {
-      cardkey: "FAGADE3",
-      key: "3",
-      desc: "汤明刚-12204",
-      tokennum: 10000,
-      binduser: "tmg@ansuntech.com",
-      activedtime: "20220402",
-      createdtime: "20220302",
-    },
-    {
-      cardkey: "FAGADE4",
-      key: "4",
-      desc: "候永强-1220",
-      tokennum: 10000,
-      binduser: "zqb@ansuntech.com",
-      activedtime: "20220502",
-      createdtime: "202204102",
-    },
-  ];
+
   const [isOpen, setIsOpen] = useState(false);
   const [code, setCode] = useState("");
+  const [isNum, setIsNum] = useState(false);
 
   const showModal = () => {
     setIsOpen(true);
@@ -91,7 +54,47 @@ export default function TopUpManager() {
     setIsOpen(false);
   };
   const generateCode = () => {
-    setCode("ABCDf");
+    // setCode("ABCDf");
+    axios
+      .post("/api/card/create_card_code", qs.stringify({ token: token }))
+      .then((res) => {
+        setCode(res.data.card_code);
+      });
+  };
+  const changePage = (a, b, c) => {
+    const pageIndex = a.current;
+    axios
+      .post("/api/card/card_code_list", qs.stringify({ page: pageIndex ,token:token}))
+      .then((res) => {
+        setTopUpList(res.data.data);
+      });
+  };
+  const onChange = (_, allvalues) => {
+    const result = /^[0-9]+$/.test(allvalues.card_tokens);
+    setIsNum(result);
+    if (result) {
+      setFormValue(allvalues);
+    }
+  };
+  const onSubmit = () => {
+    if (isNum && code) {
+      let a = formValue;
+      a.card_code = code;
+      a.token = token;
+      axios.post("/api/card/set_card_token", qs.stringify(a)).then((res) => {
+        if (res.data.code === 1) {
+          message.success({
+            duration: 3,
+            content: res.data.msg,
+            onClose: () => {
+              window.location.reload()
+            },
+          });
+        }
+      });
+    } else {
+      message.info({ duration: 3, content: "输入无效" });
+    }
   };
   return (
     <div className="table">
@@ -107,8 +110,9 @@ export default function TopUpManager() {
         destroyOnClose={true}
         open={isOpen}
         onCancel={cancelModal}
+        onOk={onSubmit}
       >
-        <Form name="create" className="create-form">
+        <Form name="create" className="create-form" onValuesChange={onChange}>
           <Space>
             <Form.Item label="券码">
               <Input value={code} disabled />
@@ -119,12 +123,12 @@ export default function TopUpManager() {
             {/* <span>test</span> */}
           </Space>
           <Form.Item
-            name="num"
+            name="card_tokens"
             label="点数"
             rules={[
               {
                 required: true,
-                max:9,
+                max: 9,
                 pattern: new RegExp(/^[0-9]+$/),
                 message: "请输入正确的点数!",
               },
@@ -134,7 +138,12 @@ export default function TopUpManager() {
           </Form.Item>
         </Form>
       </Modal>
-      <Table columns={columns} dataSource={topUpData} />
+      <Table
+        columns={columns}
+        dataSource={topUpList}
+        pagination={{ defaultCurrent: 1, total: pageTotal, pageSize: 10 }}
+        onChange={changePage}
+      />
     </div>
   );
 }

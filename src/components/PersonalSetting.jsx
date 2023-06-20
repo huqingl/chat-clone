@@ -5,10 +5,11 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 export default function PersonalSetting() {
   const [showChangePassword, setShowChangePassword] = useState(false);
-
+  const userid = localStorage.getItem('userid')
   const navigate = useNavigate();
 
   const logOut = () => {
+    localStorage.removeItem("userid");
     localStorage.removeItem("token");
     navigate("/login");
   };
@@ -34,7 +35,8 @@ export default function PersonalSetting() {
     });
   };
   return (
-    <div className="title mt-10">
+    <div className="title mt-6">
+      <p className="mb-4 text-sm"><span>当前用户：</span><span>{userid}</span></p>
       <Space>
         <Button onClick={showChangePasswordBox}>修改密码</Button>
         <Button onClick={logOut}>退出登录</Button>

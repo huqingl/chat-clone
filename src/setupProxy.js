@@ -6,7 +6,7 @@ module.exports = function (app) {
       target: "http://192.168.80.13:5000/",
       // target: "http://shunyuanchat.site",
       changeOrigin: true,
-      "secure": false,
+      secure: false,
       pathRewrite: { '^/api': '' }
     })
   );

@@ -5,7 +5,7 @@ import axios from "axios";
 export default function ContactManager() {
   const [imageUrl, setImageUrl] = useState();
   const [fileList, setFileList] = useState([]);
-
+  const token = localStorage.getItem("atoken");
   const beforeUpload = (file, fileList) => {
     const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png";
     if (!isJpgOrPng) {
@@ -29,6 +29,7 @@ export default function ContactManager() {
   const onFinish = (values) => {
     const formData = new FormData();
     formData.append("email", values.email);
+    formData.append("token", token);
     formData.append("wechat_img", fileList[0].originFileObj);
     axios( {
       method: "post",

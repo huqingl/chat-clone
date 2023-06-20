@@ -1,9 +1,7 @@
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
 import { Menu } from "antd";
 const SideBar = () => {
   const navigate = useNavigate();
-  const [openKeys, setOpenKeys] = useState([]);
   // function getItem(label, key, children, type) {
   //   return {
   //     key,
@@ -33,6 +31,8 @@ const SideBar = () => {
       label: "充值管理",
     },
     { key: "sub3", label: "联系人管理" },
+    { key: "sub4", label: "请求记录" },
+    { key: "sub5", label: "注销登录" },
   ];
   const clickMenu = ({ key }) => {
     switch (key) {
@@ -44,6 +44,13 @@ const SideBar = () => {
         break;
       case 'sub3':
         navigate("/admin/contact-manager")
+        break;
+      case 'sub4':
+        navigate("/admin/request-record")
+        break;
+      case 'sub5':
+        localStorage.removeItem('atoken')
+        window.location.reload()
         break;
       default:
         break;
@@ -80,7 +87,6 @@ const SideBar = () => {
         style={{
           width: 256,
         }}
-        openKeys={openKeys}
         items={navItems}
         onSelect={clickMenu}
       />

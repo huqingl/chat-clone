@@ -1,4 +1,4 @@
-import { createFromIconfontCN } from "@ant-design/icons";
+import { createFromIconfontCN,CopyOutlined } from "@ant-design/icons";
 import { Spin } from "antd";
 // import HighlightedResponse from "./HighlightedResponce";
 import { useEffect, useRef } from "react";
@@ -16,6 +16,9 @@ const AnswerSection = ({ storedValues, canInput, loading }) => {
   useEffect(() => {
     scrollToBottom();
   }, [storedValues]);
+  const copyText = (text)=>{
+    navigator.clipboard.writeText(text)
+  }
   return (
     <>
       <div className="answer-container overflow-hidden h-full">
@@ -71,6 +74,7 @@ const AnswerSection = ({ storedValues, canInput, loading }) => {
                           }
                         ></span>
                       </div>
+                      <div className="pl-4"><CopyOutlined onClick={()=>copyText(value.content)} className="cursor-pointer"/></div>
                     </div>
                   </div>
                 </div>

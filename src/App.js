@@ -64,7 +64,7 @@ const App = () => {
   const [loading, setLoading] = useState(false);
   const [canInput, setCanInput] = useState(false);
   const GenerateResponse = async (newQuestion, setNewQuestion, canInput) => {
-    //将文本question变为对象
+    const token = localStorage.getItem("token");
     setCanInput(canInput);
     setLoading(true);
     const comleteQuestion = { role: "user", content: newQuestion };
@@ -72,59 +72,87 @@ const App = () => {
     setStoredValues(newStoredValues);
     // console.log(storedValues);
     localStorage.setItem("history", JSON.stringify(newStoredValues));
-    // const eventSource = new EventSource(
-    //   // 'http://192.168.80.13:5000/chat'
-    //   // `http://192.168.80.13:5000/chat?question=${newQuestion}&token=${token}`
-    // );
-    // let answer = "";
-    // eventSource.onmessage = function (e) {
-    //   // console.log(e.data)
-    //   if (e.data === "[DONE]") {
-    //     eventSource.close();
-    //     setCanInput(false);
-    //     const newStoredValues1 = [...newStoredValues, { role: "assistant", content: answer },]
-    //     localStorage.setItem("history", JSON.stringify(newStoredValues1));
-    //   } else {
-    //     try {
-    //       let re = JSON.parse(e.data)
-    //       let txt = re.choices[0].delta.content ? re.choices[0].delta.content : '';
-    //       if (txt !== undefined) {
-    //         answer += txt.replace(/(?:\n|\r\n|\r|\n\n)/g, "<br>");
-    //         // answer += txt;
-    //         // // answer += txt;
-    //         setStoredValues([
-    //           ...newStoredValues,
-    //           { role: "assistant", content: answer},
-    //         ]);
-    //       }
-    //     } catch (d) {
-    //     }
-    //   }
-    // };
-    // eventSource.onerror = function (e) {
-    //   console.log(e);
-    //   eventSource.close();
-    // };
 
-    // setNewQuestion("");
     axios
-      .get(
-        `/api/chat?question=${newQuestion}&token=${token}`
-      )
+      .get(`/api/chat?question=${newQuestion}&token=${token}`)
       .then((res) => {
-        if (res.data.code) {
+        if (res.data.code === 1000) {
           message.info({
             duration: 3,
             content: res.data.msg,
             onClose: () => {
               localStorage.removeItem("token");
+              localStorage.removeItem("userid");
               navigate("/");
             },
           });
+          return false;
+        } else if (res.data.code === 1001) {
+          message.info({
+            duration: 3,
+            content: res.data.msg,
+          });
+          return false;
+        } else if (res.data.code === 1002) {
+          localStorage.removeItem("token");
+          localStorage.setItem("token", res.data.token);
+          const token1 = res.data.token
+          const eventSource = new EventSource(
+            `/api/chat?question=${newQuestion}&token=${token1}`
+          );
+          eventSource.onopen = function () {
+            setLoading(false);
+          };
+          let answer = "";
+          eventSource.onmessage = function (e) {
+            if (e.data === "[DONE]") {
+              eventSource.close();
+              setCanInput(false);
+              const formated = HighlightedResponse(answer);
+              setStoredValues([
+                ...newStoredValues,
+                { role: "assistant", content: formated },
+              ]);
+              const newStoredValues1 = [
+                ...newStoredValues,
+                { role: "assistant", content: formated },
+              ];
+              localStorage.setItem("history", JSON.stringify(newStoredValues1));
+            } else {
+              try {
+                // let txt = JSON.parse(e.data).choices[0].delta.content;
+                let txt = JSON.parse(e.data)["format_data"];
+                if (txt !== undefined) {
+                  // console.log("=>", txt);
+                  // answer += txt.replace(/(?:\n|\r\n|\r|\n\n)/g, "<br>");
+                  answer += txt;
+                  setStoredValues([
+                    ...newStoredValues,
+                    { role: "assistant", content: answer },
+                  ]);
+                }
+              } catch (d) {}
+            }
+          };
+          eventSource.onerror = function (e) {
+            // console.log(e);
+            setLoading(false);
+            eventSource.close();
+            setCanInput(false);
+            const newStoredValues2 = [
+              ...newStoredValues,
+              { role: "assistant", content: "网络似乎遇到问题，请重新提问" },
+            ];
+            localStorage.setItem("history", JSON.stringify(newStoredValues2));
+            setStoredValues([
+              ...newStoredValues,
+              { role: "assistant", content: "网络似乎遇到问题，请重新提问" },
+            ]);
+          };
+          setNewQuestion("");
         } else {
           const eventSource = new EventSource(
             `/api/chat?question=${newQuestion}&token=${token}`
-            // `http://shunyuanchat.site:7000/api1/chat.php?question=${newQuestion}&userid=${userid}`
           );
           eventSource.onopen = function () {
             setLoading(false);

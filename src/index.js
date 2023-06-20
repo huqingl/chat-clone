@@ -1,5 +1,5 @@
 import React from "react";
-import { createBrowserRouter, createHashRouter, RouterProvider } from "react-router-dom";
+import { createHashRouter, RouterProvider } from "react-router-dom";
 import ReactDOM from "react-dom/client";
 import "./index.scss";
 import App from "./App";
@@ -9,10 +9,12 @@ import ResetPassword from "./components/ResetPassword";
 import reportWebVitals from "./reportWebVitals";
 import ErrorPage from "./components/Error";
 import HomePage from "./admin/HomePage";
+import AdminLogin from "./admin/AdminLogin";
 import Welcome from "./admin/Welcome"
 import UserManager from "./admin/UserManager";
 import TopUpManager from "./admin/TopUpManager";
 import ContactManager from "./admin/ContactManager";
+import RequestRecord from "./admin/RequestRecord";
 const router = createHashRouter([
   {
     path: "/",
@@ -30,6 +32,10 @@ const router = createHashRouter([
   {
     path: "/reset",
     element: <ResetPassword />,
+  },
+  {
+    path: "/admin/login",
+    element: <AdminLogin />,
   },
   {
     path: "/admin",
@@ -50,6 +56,10 @@ const router = createHashRouter([
       {
         path: "/admin/contact-manager",
         element: <ContactManager />,
+      },
+      {
+        path: "/admin/request-record",
+        element: <RequestRecord />,
       },
       
     ],

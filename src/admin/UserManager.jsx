@@ -5,12 +5,13 @@ import qs from "qs";
 export default function UserManager() {
   const [userList, setUserList] = useState([]);
   const [pageTotal,setPageTotal] = useState(null)
+  const token = localStorage.getItem("atoken");
   useEffect(() => {
-    axios.post("/api/user/get_user_info").then((res) => {
+    axios.post("/api/user/get_user_info",qs.stringify({token:token})).then((res) => {
       setUserList(res.data.data)
       setPageTotal(res.data.total_count)
     });
-  }, []);
+  }, [token]);
   const columns = [
     {
       title: "用户帐户",
@@ -51,7 +52,7 @@ export default function UserManager() {
   const changePage = (a,b,c)=>{
     const pageIndex = a.current
     axios
-      .post("/api/user/get_user_info", qs.stringify({page:pageIndex}))
+      .post("/api/user/get_user_info", qs.stringify({page:pageIndex,token:token}))
       .then((res) => {
         setUserList(res.data.data);
       });
