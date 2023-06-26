@@ -66,8 +66,14 @@ export default function Register() {
   };
   const [canClick, setCanClick] = useState(false);
   const [time, setTime] = useState(0);
+  const [imgUrl, setImgUrl] = useState('/6.jpg');
   const timer = useRef(null);
-
+  const setImageUrl = ()=> {
+    const name = Math.floor(Math.random() * 10 )
+    const imgurl = '/' + String(name) + '.jpg'
+    console.log(imgurl)
+    setImgUrl(imgurl)
+  }
   useEffect(() => {
     timer.current && clearInterval(timer.current);
     return () => timer.current && clearInterval(timer.current);
@@ -221,8 +227,12 @@ export default function Register() {
           <Vertify
             width={340}
             height={240}
+            // imgUrl='/6.jpg'
+            imgUrl={imgUrl}
             visible={visible}
             onSuccess={verifySuccess}
+            onFail={setImageUrl}
+            onRefresh={setImageUrl}
           />
         </div>
       </div>
