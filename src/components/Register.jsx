@@ -66,11 +66,11 @@ export default function Register() {
   };
   const [canClick, setCanClick] = useState(false);
   const [time, setTime] = useState(0);
-  const [imgUrl, setImgUrl] = useState('/6.jpg');
+  const [imgUrl, setImgUrl] = useState('/images/6.jpg');
   const timer = useRef(null);
   const setImageUrl = ()=> {
     const name = Math.floor(Math.random() * 10 )
-    const imgurl = '/' + String(name) + '.jpg'
+    const imgurl = '/images/' + String(name) + '.jpg'
     console.log(imgurl)
     setImgUrl(imgurl)
   }

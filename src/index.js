@@ -3,6 +3,8 @@ import { createHashRouter, RouterProvider } from "react-router-dom";
 import ReactDOM from "react-dom/client";
 import "./index.scss";
 import App from "./App";
+import PdfUpload from "./components/PdfUpload";
+import PdfChat from "./components/PdfChat"
 import Login from "./components/Login";
 import Register from "./components/Register";
 import ResetPassword from "./components/ResetPassword";
@@ -20,6 +22,14 @@ const router = createHashRouter([
     path: "/",
     element: <App />,
     errorElement: <ErrorPage />,
+  },
+  {
+    path:"/pdf-upload",
+    element:<PdfUpload />
+  },
+  {
+    path:"/pdf-chat",
+    element:<PdfChat />
   },
   {
     path: "/login",

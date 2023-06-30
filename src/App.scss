@@ -1,6 +1,10 @@
 .ant-btn-primary {
   background-color: #1677ff!important;
 }
+.pdf-style {
+  box-shadow: 2px 2px 8px 0 rgba(0,0,0,.2);
+}
+
 .cursor {
   animation: 0.6s van-cursor-flicker infinite;
   display:inline-block;
