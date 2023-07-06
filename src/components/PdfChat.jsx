@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
-import { useNavigate } from "react-router-dom";
+import { useNavigate ,useSearchParams} from "react-router-dom";
 import "react-pdf/dist/esm/Page/TextLayer.css";
 import "react-pdf/dist/esm/Page/AnnotationLayer.css";
 import PdfFormSection from "./PdfFormSection";
@@ -9,18 +9,21 @@ import axios from "axios";
 import { message } from "antd";
 import HighlightedResponse from "./HighlightedResponce";
 import { useWindowWidth } from "@wojtekmaj/react-hooks";
-// pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
-pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-  "pdfjs-dist/build/pdf.worker.min.js",
-  import.meta.url
-).toString();
+pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
+// pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+//   "pdfjs-dist/build/pdf.worker.min.js",
+//   import.meta.url
+// ).toString();
 const options = {
   cMapUrl: "cmaps/",
   standardFontDataUrl: "standard_fonts/",
 };
 export default function PdfChat() {
   const navigate = useNavigate();
-
+  const [searchParams] = useSearchParams()
+  const pdf_name = searchParams.get("name")
+  const pdf = "/file_api/" + pdf_name
+  const md5 = pdf_name.split('.')[0]
   //获取pdf文档父元素的宽度，以让canvas按此宽度渲染
   const width = useWindowWidth() * 0.6 - 42;
   //总页数
@@ -38,7 +41,7 @@ export default function PdfChat() {
     let options = {
       root: document.querySelector("#pdf-area"),
       rootMargin: "0px",
-      threshold: 0.7, // At least 20% of the last page must be visible
+      threshold: 0.5, // At least 20% of the last page must be visible
     };
     let intersectionCallback = (entries, observe) => {
       entries.forEach((entry) => {
@@ -80,10 +83,10 @@ export default function PdfChat() {
     const newStoredValues = [...storedValues, comleteQuestion];
     setStoredValues(newStoredValues);
     // console.log(storedValues);
-    localStorage.setItem("phistory", JSON.stringify(newStoredValues));
+    localStorage.setItem(md5, JSON.stringify(newStoredValues));
 
     axios
-      .get(`/api/chat?question=${newQuestion}&token=${token}`)
+      .get(`/api/pdf_handler/chat?question=${newQuestion}&token=${token}&pdf_md5=${md5}`)
       .then((res) => {
         if (res.data.code === 1000) {
           message.info({
@@ -107,7 +110,7 @@ export default function PdfChat() {
           localStorage.setItem("token", res.data.token);
           const token1 = res.data.token;
           const eventSource = new EventSource(
-            `/api/chat?question=${newQuestion}&token=${token1}`
+            `/api/pdf_handler/chat?question=${newQuestion}&token=${token1}&pdf_md5=${md5}`
           );
           eventSource.onopen = function () {
             setLoading(false);
@@ -126,7 +129,7 @@ export default function PdfChat() {
                 ...newStoredValues,
                 { role: "assistant", content: formated },
               ];
-              localStorage.setItem("phistory", JSON.stringify(newStoredValues1));
+              localStorage.setItem(md5, JSON.stringify(newStoredValues1));
             } else {
               try {
                 // let txt = JSON.parse(e.data).choices[0].delta.content;
@@ -161,7 +164,7 @@ export default function PdfChat() {
           setNewQuestion("");
         } else {
           const eventSource = new EventSource(
-            `/api/chat?question=${newQuestion}&token=${token}`
+            `/api/pdf_handler/chat?question=${newQuestion}&token=${token}&pdf_md5=${md5}`
           );
           eventSource.onopen = function () {
             setLoading(false);
@@ -180,7 +183,7 @@ export default function PdfChat() {
                 ...newStoredValues,
                 { role: "assistant", content: formated },
               ];
-              localStorage.setItem("phistory", JSON.stringify(newStoredValues1));
+              localStorage.setItem(md5, JSON.stringify(newStoredValues1));
             } else {
               try {
                 // let txt = JSON.parse(e.data).choices[0].delta.content;
@@ -217,12 +220,12 @@ export default function PdfChat() {
       });
   };
   useEffect(() => {
-    const phistory = localStorage.getItem("phistory")
-      ? localStorage.getItem("phistory")
+    const phistory = localStorage.getItem(md5)
+      ? localStorage.getItem(md5)
       : "[]";
     setStoredValues(JSON.parse(phistory));
     // console.log(storedValues);
-  }, []);
+  }, [md5]);
   useEffect(() => {
     detectPage();
     setTimeout(() => {
@@ -246,7 +249,7 @@ export default function PdfChat() {
         </div>
         <div className="overflow-y-scroll p-4  pt-0 flex-grow" id="pdf-area">
           <Document
-            file="/files/1.pdf"
+            file={pdf}
             onLoadSuccess={onDocumentLoadSuccess}
             options={options}
           >

@@ -8,6 +8,13 @@ module.exports = function (app) {
       changeOrigin: true,
       secure: false,
       // pathRewrite: { '^/api': '' }
+    }),
+    createProxyMiddleware("/file_api", {
+      target: "http://hhchat.site",
+      // target: "http://shunyuanchat.site",
+      changeOrigin: true,
+      secure: false,
+      // pathRewrite: { '^/api': '' }
     })
   );
 };

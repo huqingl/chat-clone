@@ -6,7 +6,7 @@ import {
   AccountBookOutlined,
   ClearOutlined,
   UserOutlined,
-  FilePdfOutlined
+  MessageOutlined,
 } from "@ant-design/icons";
 import { createFromIconfontCN } from "@ant-design/icons";
 import PersonalSetting from "./PersonalSetting";
@@ -39,7 +39,7 @@ const PdfFormSection = ({ generateResponse, canInput }) => {
     setIsModalOpen(false);
   };
   const confirmClear = () => {
-    localStorage.removeItem("history");
+    localStorage.removeItem("phistory");
     setIsModalOpen(false);
     window.location.reload();
   };
@@ -47,9 +47,9 @@ const PdfFormSection = ({ generateResponse, canInput }) => {
     setMenuOpened(true);
     setActiveKey("1");
   };
-  const goPdfPage = ()=>{
-    navigate("/pdf-upload")
-  }
+  const goChatPage = () => {
+    navigate("/");
+  };
   const showMenu = () => {
     setMenuOpened(true);
   };
@@ -62,7 +62,14 @@ const PdfFormSection = ({ generateResponse, canInput }) => {
   };
   return (
     <div className="footer w-full pt-7 pb-14 absolute bottom-0 bg-white">
-      <div className="tools px-4 mb-2 mobile:w-11/12 w-4/5 mt-0 mx-auto flex justify-end">
+      <div className="tools px-4 mb-2 mobile:w-11/12 w-4/5 mt-0 mx-auto flex justify-between">
+        <Space className="self-start pl-10">
+          <Button
+            title="聊天"
+            onClick={goChatPage}
+            icon={<MessageOutlined style={{ verticalAlign: "middle" }} />}
+          ></Button>
+        </Space>
         <Space className="pr-10">
           <Button
             title="充值"

@@ -1,8 +1,10 @@
 import { Table, Button, Space, Modal, Form, Input, message } from "antd";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import qs from "qs";
 export default function TopUpManager() {
+  const navigate = useNavigate();
   const [topUpList, setTopUpList] = useState([]);
   const [pageTotal, setPageTotal] = useState(null);
   const token = localStorage.getItem("atoken");
@@ -11,8 +13,19 @@ export default function TopUpManager() {
     axios
       .post("/api/card/card_code_list", qs.stringify({ token: token }))
       .then((res) => {
-        setTopUpList(res.data.data);
-        setPageTotal(res.data.total);
+        if (res.data.code === 1000) {
+          message.info({
+            duration: 2,
+            content: res.data.msg,
+            onClose: () => {
+              localStorage.removeItem("atoken");
+              navigate("/admin/login");
+            },
+          });
+        } else {
+          setTopUpList(res.data.data);
+          setPageTotal(res.data.total);
+        }
       });
   }, [token]);
   const columns = [

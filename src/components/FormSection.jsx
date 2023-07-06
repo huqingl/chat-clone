@@ -68,6 +68,7 @@ const FormSection = ({ generateResponse, canInput }) => {
             title="PDF处理"
             onClick={goPdfPage}
             icon={<FilePdfOutlined style={{ verticalAlign: "middle" }} />}
+            className="hidden"
           ></Button>
         </Space>
         <Space className="pr-10">

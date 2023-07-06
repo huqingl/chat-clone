@@ -1,16 +1,32 @@
-import { Table } from "antd";
+import { Table, message } from "antd";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import qs from "qs";
+import { useNavigate } from "react-router-dom";
+
 export default function UserManager() {
+  const navigate = useNavigate();
   const [userList, setUserList] = useState([]);
-  const [pageTotal,setPageTotal] = useState(null)
+  const [pageTotal, setPageTotal] = useState(null);
   const token = localStorage.getItem("atoken");
   useEffect(() => {
-    axios.post("/api/user/get_user_info",qs.stringify({token:token})).then((res) => {
-      setUserList(res.data.data)
-      setPageTotal(res.data.total_count)
-    });
+    axios
+      .post("/api/user/get_user_info", qs.stringify({ token: token }))
+      .then((res) => {
+        if (res.data.code === 1000) {
+          message.info({
+            duration: 2,
+            content: res.data.msg,
+            onClose: () => {
+              localStorage.removeItem("atoken");
+              navigate("/admin/login");
+            },
+          });
+        } else {
+          setUserList(res.data.data);
+          setPageTotal(res.data.total_count);
+        }
+      });
   }, [token]);
   const columns = [
     {
@@ -49,14 +65,28 @@ export default function UserManager() {
       key: "registerTime",
     },
   ];
-  const changePage = (a,b,c)=>{
-    const pageIndex = a.current
+  const changePage = (a, b, c) => {
+    const pageIndex = a.current;
     axios
-      .post("/api/user/get_user_info", qs.stringify({page:pageIndex,token:token}))
+      .post(
+        "/api/user/get_user_info",
+        qs.stringify({ page: pageIndex, token: token })
+      )
       .then((res) => {
-        setUserList(res.data.data);
+        if (res.code === 1000) {
+          message.info({
+            duration: 2,
+            content: res.data.msg,
+            onClose: () => {
+              localStorage.removeItem("atoken");
+              navigate("/admin/login");
+            },
+          });
+        } else {
+          setUserList(res.data.data);
+        }
       });
-  }
+  };
   return (
     <div className="table">
       <Table

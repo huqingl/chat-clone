@@ -1,26 +1,51 @@
 import { Button, Divider, Table, Input, message } from "antd";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+
 import axios from "axios";
 import qs from "qs";
 export default function TopUP() {
+  const navigate = useNavigate();
+
   const token = localStorage.getItem("token");
   const [balance, setBalance] = useState("");
   const [tokenList, setTokenList] = useState([]);
-  const [pageTotal,setPageTotal] = useState(null)
+  const [pageTotal, setPageTotal] = useState(null);
   useEffect(() => {
     axios
       .post("/api/buy_card/balance", qs.stringify({ token: token }))
       .then((res) => {
-        setBalance(res.data.data);
+        if (res.data.code === 1002) {
+          message.info({
+            duration: 2,
+            content: res.data.msg,
+            onClose: () => {
+              localStorage.removeItem("token");
+              navigate("/login");
+            },
+          });
+        } else {
+          setBalance(res.data.data);
+        }
       });
   }, [token]);
   useEffect(() => {
     axios
       .post("/api/buy_card/list", qs.stringify({ token: token }))
       .then((res) => {
-        setTokenList(res.data.data);
-        setPageTotal(res.data.data[0].total)
-
+        if (res.data.code === 1002) {
+          message.info({
+            duration: 2,
+            content: res.data.msg,
+            onClose: () => {
+              localStorage.removeItem("token");
+              navigate("/login");
+            },
+          });
+        } else {
+          setTokenList(res.data.data);
+          setPageTotal(res.data.data[0].total);
+        }
       });
   }, [token]);
   const [inputTokenCode, setInputTokenCode] = useState(false);
@@ -104,14 +129,17 @@ export default function TopUP() {
       }
     });
   };
-  const changePage = (a,b,c)=>{
-    const pageIndex = a.current
+  const changePage = (a, b, c) => {
+    const pageIndex = a.current;
     axios
-      .post("/api/buy_card/list", qs.stringify({ token: token ,page:pageIndex}))
+      .post(
+        "/api/buy_card/list",
+        qs.stringify({ token: token, page: pageIndex })
+      )
       .then((res) => {
         setTokenList(res.data.data);
       });
-  }
+  };
   return (
     <div className="w-full mt-6">
       <div className="balance">
@@ -142,7 +170,7 @@ export default function TopUP() {
         <Table
           columns={columns}
           dataSource={tokenList}
-          pagination={{ defaultCurrent: 1, total: pageTotal ,pageSize:5}}
+          pagination={{ defaultCurrent: 1, total: pageTotal, pageSize: 5 }}
           onChange={changePage}
         />
       </div>

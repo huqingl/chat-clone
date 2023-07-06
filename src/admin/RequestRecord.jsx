@@ -37,7 +37,7 @@ export default function RequestRecord() {
       <Table
         dataSource={requestList}
         columns={columns}
-        pagination={{ defaultCurrent: 1, total: pageTotal, pageSize: 10 }}
+        pagination={{ defaultCurrent: 1, total: pageTotal, pageSize: 10 ,showSizeChanger:false}}
         onChange={changePage}
       />
     </div>

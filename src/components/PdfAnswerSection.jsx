@@ -16,9 +16,9 @@ const PdfAnswerSection = ({ storedValues, canInput, loading }) => {
   useEffect(() => {
     scrollToBottom();
   }, [storedValues]);
-  const copyText = (text) => {
-    navigator.clipboard.writeText(text);
-  };
+  // const copyText = (text) => {
+  //   navigator.clipboard.writeText(text);
+  // };
   return (
     <>
       <div className="answer-container overflow-hidden h-full">
@@ -62,8 +62,8 @@ const PdfAnswerSection = ({ storedValues, canInput, loading }) => {
                       </div> */}
                       <div
                         className={`${
-                          value.role === "assistant" ? "justify-end bg-blue-200" : ""
-                        } answer-content w-3/5 basis-auto overflow-hidden text-base p-2 bg-gray-200`}
+                          value.role === "assistant" ? "justify-end bg-blue-200" : "bg-gray-200"
+                        } answer-content w-3/5 basis-auto overflow-hidden text-base p-2 `}
                         style={{ whiteSpace: "pre-line",border:"1px solid #eee",borderRadius:'5px' }}
                       >
                         {/* <HighlightedResponse response={value.content} /> */}
