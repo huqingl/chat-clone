@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
-import { useNavigate ,useSearchParams} from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import "react-pdf/dist/esm/Page/TextLayer.css";
 import "react-pdf/dist/esm/Page/AnnotationLayer.css";
 import PdfFormSection from "./PdfFormSection";
 import PdfAnswerSection from "./PdfAnswerSection";
 import axios from "axios";
+import qs from "qs";
 import { message } from "antd";
 import HighlightedResponse from "./HighlightedResponce";
 import { useWindowWidth } from "@wojtekmaj/react-hooks";
@@ -19,11 +20,10 @@ const options = {
   standardFontDataUrl: "standard_fonts/",
 };
 export default function PdfChat() {
+  const token = localStorage.getItem("token");
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams()
-  const pdf_name = searchParams.get("name")
-  const pdf = "/file_api/" + pdf_name
-  const md5 = pdf_name.split('.')[0]
+  const [searchParams] = useSearchParams();
+
   //获取pdf文档父元素的宽度，以让canvas按此宽度渲染
   const width = useWindowWidth() * 0.6 - 42;
   //总页数
@@ -86,7 +86,9 @@ export default function PdfChat() {
     localStorage.setItem(md5, JSON.stringify(newStoredValues));
 
     axios
-      .get(`/api/pdf_handler/chat?question=${newQuestion}&token=${token}&pdf_md5=${md5}`)
+      .get(
+        `/api/pdf_handler/chat?question=${newQuestion}&token=${token}&pdf_md5=${md5}`
+      )
       .then((res) => {
         if (res.data.code === 1000) {
           message.info({
@@ -219,6 +221,34 @@ export default function PdfChat() {
         }
       });
   };
+
+  useEffect(() => {
+    axios
+      .post("/api/login/index_check_token", qs.stringify({ token: token }))
+      .then((res) => {
+        if (res.data.code === 1005) {
+          localStorage.removeItem("token");
+          localStorage.removeItem("userid");
+          navigate("/login");
+        } else {
+          return;
+        }
+      });
+  }, [navigate, token]);
+
+  const [pdf, setPdf] = useState("");
+  const [md5, setMd5] = useState("");
+  useEffect(() => {
+    const pdf_name = searchParams.get("name");
+    if (pdf_name === null) {
+      navigate("/pdf-upload");
+    } else {
+      const pdf = "/file_api/" + pdf_name;
+      const md5 = pdf_name.split(".")[0];
+      setPdf(pdf);
+      setMd5(md5);
+    }
+  }, []);
   useEffect(() => {
     const phistory = localStorage.getItem(md5)
       ? localStorage.getItem(md5)

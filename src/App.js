@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./App.scss";
 import axios from "axios";
+import qs from "qs"
 import { message } from "antd";
 import HighlightedResponse from "./components/HighlightedResponce";
 
@@ -37,14 +38,20 @@ import HighlightedResponse from "./components/HighlightedResponce";
 const App = () => {
   const [storedValues, setStoredValues] = useState([]);
   const token = localStorage.getItem("token");
-  // const userid = localStorage.getItem("userid");
   const navigate = useNavigate();
   useEffect(() => {
-    if (token) {
-      return;
-    } else {
-      navigate("/login");
-    }
+    axios
+      .post("/api/login/index_check_token", qs.stringify({ token: token }))
+      .then((res) => {
+        if (res.data.code === 1005) {
+          localStorage.removeItem("token");
+          localStorage.removeItem("userid");
+          navigate("/login");
+        }
+        else {
+          return
+        }
+      });
   }, [navigate, token]);
   useEffect(() => {
     const history = localStorage.getItem("history")
@@ -96,7 +103,7 @@ const App = () => {
         } else if (res.data.code === 1002) {
           localStorage.removeItem("token");
           localStorage.setItem("token", res.data.token);
-          const token1 = res.data.token
+          const token1 = res.data.token;
           const eventSource = new EventSource(
             `/api/chat?question=${newQuestion}&token=${token1}`
           );

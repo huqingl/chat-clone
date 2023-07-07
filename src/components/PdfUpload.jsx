@@ -61,7 +61,7 @@ export default function PdfUpload() {
     const history = localStorage.getItem("uploadHistory")
       ? localStorage.getItem("uploadHistory")
       : "[]";
-    console.log(history);
+    // console.log(history);
     setUploadHistory(JSON.parse(history));
   }, []);
   const goPdf = (target) => {

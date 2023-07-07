@@ -29,7 +29,8 @@ const router = createHashRouter([
   },
   {
     path:"/pdf-chat",
-    element:<PdfChat />
+    element:<PdfChat />,
+    errorElement:<PdfUpload />
   },
   {
     path: "/login",
