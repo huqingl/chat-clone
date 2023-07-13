@@ -102,6 +102,9 @@ export default function PdfChat() {
           });
           return false;
         } else if (res.data.code === 1001) {
+          setLoading(false);
+          setCanInput(false);
+          setNewQuestion("");
           message.info({
             duration: 3,
             content: res.data.msg,
@@ -265,7 +268,7 @@ export default function PdfChat() {
 
   return (
     <div className="w-full h-screen flex">
-      <div className="pdf-show w-3/5 border-r-2 flex flex-col ">
+      <div className="pdf-show w-3/5 mobile:hidden border-r-2 flex flex-col ">
         <div className="w-full">
           <p className="text-right p-2 pr-4">
             <input
@@ -295,7 +298,7 @@ export default function PdfChat() {
           </Document>
         </div>
       </div>
-      <div className="chat-space w-2/5">
+      <div className="chat-space w-2/5 mobile:w-full">
         <div className="h-full relative max-w-full">
           <PdfAnswerSection
             storedValues={storedValues}
@@ -305,6 +308,7 @@ export default function PdfChat() {
           <PdfFormSection
             generateResponse={GenerateResponse}
             canInput={canInput}
+            pdfMd5={md5}
           />
         </div>
       </div>

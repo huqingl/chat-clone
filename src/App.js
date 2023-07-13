@@ -95,6 +95,9 @@ const App = () => {
           });
           return false;
         } else if (res.data.code === 1001) {
+          setLoading(false);
+          setCanInput(false);
+          setNewQuestion("");
           message.info({
             duration: 3,
             content: res.data.msg,

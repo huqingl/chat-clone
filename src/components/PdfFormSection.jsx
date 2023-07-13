@@ -17,7 +17,7 @@ const IconFont = createFromIconfontCN({
   scriptUrl: "//at.alicdn.com/t/c/font_3973055_x1qwjo6x41.js",
 });
 const { TextArea } = Input;
-const PdfFormSection = ({ generateResponse, canInput }) => {
+const PdfFormSection = ({ generateResponse, canInput,pdfMd5 }) => {
   const navigate = useNavigate();
   const [newQuestion, setNewQuestion] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -39,7 +39,7 @@ const PdfFormSection = ({ generateResponse, canInput }) => {
     setIsModalOpen(false);
   };
   const confirmClear = () => {
-    localStorage.removeItem("phistory");
+    localStorage.removeItem(pdfMd5);
     setIsModalOpen(false);
     window.location.reload();
   };
