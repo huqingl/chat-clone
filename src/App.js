@@ -81,7 +81,8 @@ const App = () => {
     localStorage.setItem("history", JSON.stringify(newStoredValues));
 
     axios
-      .get(`/api/chat?question=${newQuestion}&token=${token}`)
+      .get(`/api/chat?question=${encodeURIComponent(newQuestion)}&token=${token}`)
+      // .post('/api/chat',qs.stringify({token: token, question:newQuestion}))
       .then((res) => {
         if (res.data.code === 1000) {
           message.info({
@@ -108,7 +109,7 @@ const App = () => {
           localStorage.setItem("token", res.data.token);
           const token1 = res.data.token;
           const eventSource = new EventSource(
-            `/api/chat?question=${newQuestion}&token=${token1}`
+            `/api/chat?question=${encodeURIComponent(newQuestion)}&token=${token1}`
           );
           eventSource.onopen = function () {
             setLoading(false);
@@ -162,7 +163,7 @@ const App = () => {
           setNewQuestion("");
         } else {
           const eventSource = new EventSource(
-            `/api/chat?question=${newQuestion}&token=${token}`
+            `/api/chat?question=${encodeURIComponent(newQuestion)}&token=${token}`
           );
           eventSource.onopen = function () {
             setLoading(false);
