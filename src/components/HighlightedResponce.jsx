@@ -32,7 +32,14 @@ import "prismjs/components/prism-python";
 
 const codeBlockRegex = /```([\w-]+)?\n([^`]+)```/g;
 function HighlightedResponse(response) {
-  const processedResponse = response.replace(
+  var map = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;'
+  };
+  let newText = response.replace(/[&<>]/g, function(m) { return map[m]; });
+
+  const processedResponse = newText.replace(
     codeBlockRegex,
     (_, lang, code) => {
       const highlightedCode = Prism.highlight(

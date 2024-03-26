@@ -74,7 +74,7 @@ const App = () => {
     const token = localStorage.getItem("token");
     setCanInput(canInput);
     setLoading(true);
-    const comleteQuestion = { role: "user", content: newQuestion };
+    const comleteQuestion = { role: "user", content: HighlightedResponse(newQuestion) };
     const newStoredValues = [...storedValues, comleteQuestion];
     setStoredValues(newStoredValues);
     // console.log(storedValues);
